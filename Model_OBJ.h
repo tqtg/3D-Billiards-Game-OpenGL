@@ -5,6 +5,7 @@
 #include <queue>
 #include <map>
 #include <GL/glut.h>
+#include "lib/SOIL.h"
 
 #define MAX_MTL 10
 #define MAX_OBJ 50
@@ -24,6 +25,7 @@ typedef struct {
     float Ni;
     float d;
     int illum;
+	bool hasTexture;
     string texture;
 } material;
 
@@ -60,10 +62,9 @@ private:
 	long total_textures_coords_floats;
 	long total_normal_vectors_floats;
 	int total_objects;
-	int total_materials;
 public:
 	material materials[MAX_MTL];
-	
+	int total_materials;
 
 public:		
 	Model_OBJ();

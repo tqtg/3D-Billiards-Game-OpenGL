@@ -45,6 +45,8 @@ int Model_OBJ::loadMTL(char* filename)
 			if (type.compare("ne") == 0)
 			{
 				nMtl++;
+				materials[nMtl].hasTexture = false;
+				
 				string l = "newmtl ";
 				materials[nMtl].name = line.substr(l.size());
 				cout << "newmtl " << materials[nMtl].name << endl;
@@ -86,6 +88,8 @@ int Model_OBJ::loadMTL(char* filename)
 			}
 			else if (type.compare("ma") == 0)
 			{
+				materials[nMtl].hasTexture = true;
+				
 				string l = "map_Kd ";
 				materials[nMtl].texture = line.substr(l.size());
 				cout << "map_Kd " << materials[nMtl].texture << endl;
@@ -122,8 +126,8 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 		vtBuffer = (float*) malloc (fileSize);
 		vnBuffer = (float*) malloc (fileSize);
 		
-		int obj_textures_index = 0;
-		int obj_normal_vectors_index = 0;
+		int obj_textures_floats = 0;
+		int obj_normal_vectors_floats = 0;
 		object* obj;
 		
 		while (!objFile.eof())
@@ -146,8 +150,8 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 			// Create new object
 			else if (type.compare("us") == 0)
 			{
-				obj_textures_index = 0;
-				obj_normal_vectors_index = 0;
+				obj_textures_floats = 0;
+				obj_normal_vectors_floats = 0;
 				obj = &objects[total_objects];
 				string l = "usemtl ";
 				string mtlName = line.substr(l.size());
@@ -223,12 +227,12 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 					tCounter = 0;
 					for (int i = 0; i < VERTICES_PER_FACE; i++) 
 					{
-						obj->texts_coords[obj_textures_index + tCounter] = vtBuffer[2*vtNumber[i]];
-						obj->texts_coords[obj_textures_index + tCounter + 1] = vtBuffer[2*vtNumber[i] + 1];
+						obj->texts_coords[obj_textures_floats + tCounter] = vtBuffer[2*vtNumber[i]];
+						obj->texts_coords[obj_textures_floats + tCounter + 1] = vtBuffer[2*vtNumber[i] + 1];
 						tCounter += 2;
 					} 
 					
-					obj_textures_index += FLOATS_PER_TEXTURE_COOR;
+					obj_textures_floats += FLOATS_PER_TEXTURE_COOR;
 				}
 				else
 				{
@@ -255,20 +259,18 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 					obj->faces_triangles[obj->total_triangles_floats + tCounter + 2] = vertexBuffer[3*vertexNumber[i] + 2];
 					tCounter += 3;
 				}
-				
 				obj->total_triangles_floats += FLOATS_PER_TRIANGLE;
 				
 				//	object normal vectors
 				tCounter = 0;
 				for (int i = 0; i < VERTICES_PER_FACE; i++)
 				{
-					obj->norm_vectors[obj_normal_vectors_index + tCounter] = vertexBuffer[3*vnNumber[i] ];
-					obj->norm_vectors[obj_normal_vectors_index + tCounter + 1] = vertexBuffer[3*vnNumber[i] + 1];
-					obj->norm_vectors[obj_normal_vectors_index + tCounter + 2] = vertexBuffer[3*vnNumber[i] + 2];
+					obj->norm_vectors[obj_normal_vectors_floats + tCounter] = vnBuffer[3*vnNumber[i] ];
+					obj->norm_vectors[obj_normal_vectors_floats + tCounter + 1] = vnBuffer[3*vnNumber[i] + 1];
+					obj->norm_vectors[obj_normal_vectors_floats + tCounter + 2] = vnBuffer[3*vnNumber[i] + 2];
 					tCounter += 3;
 				}
-				
-				obj_normal_vectors_index += FLOATS_PER_TRIANGLE;
+				obj_normal_vectors_floats += FLOATS_PER_TRIANGLE;
 			}
 		}
 		
@@ -284,9 +286,47 @@ void Model_OBJ::draw()
  	glEnableClientState(GL_NORMAL_ARRAY);						
  	glEnableClientState (GL_TEXTURE_COORD_ARRAY);			
 	
+	int width;
+	int height;
+ 	unsigned char* img1;
+ 	unsigned char* img2;
+ 	
+ 	if (hasTexture)
+ 	{
+ 		string texture1 = "resource/" + materials[0].texture;
+ 		string texture2 = "resource/" + materials[1].texture;
+ 		
+ 		img1 = SOIL_load_image(texture1.c_str(), &width, &height, NULL, 0);
+ 		img2 = SOIL_load_image(texture2.c_str(), &width, &height, NULL, 0);
+ 	}
+	
 	for (int i = 0; i < total_objects; i++)
 	{
 		material* mtl = objects[i].material;
+		
+		if (mtl->hasTexture)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+			
+			if (mtl->texture.compare(materials[0].texture) == 0)
+			{
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img1);
+			}
+			else if (mtl->texture.compare(materials[1].texture) == 0)
+			{
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img2);
+			}
+			
+		 	glEnable(GL_TEXTURE_2D);
+		 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		}
+		else
+		{
+			glDisable(GL_TEXTURE_2D);
+		}
 		
 		float ambient[] = {mtl->Ka[0], mtl->Ka[1], mtl->Ka[2], 1.0};
 		float diffuse[] = {mtl->Kd[0], mtl->Kd[1], mtl->Kd[2], 1.0};
@@ -302,8 +342,16 @@ void Model_OBJ::draw()
 		glTexCoordPointer(2, GL_FLOAT, 0, objects[i].texts_coords);
 		glNormalPointer(GL_FLOAT, 0, objects[i].norm_vectors);						// Normal pointer to normal array
 		glDrawArrays(GL_TRIANGLES, 0, objects[i].total_triangles_floats);		// Draw the triangles
+		
+//		glDisable(GL_TEXTURE_2D);
 	}
 
+	if (hasTexture)
+	{
+		SOIL_free_image_data(img1);
+		SOIL_free_image_data(img2);
+	}
+	
 	glDisableClientState(GL_VERTEX_ARRAY);					
 	glDisableClientState(GL_NORMAL_ARRAY);				
 	glDisableClientState (GL_TEXTURE_COORD_ARRAY);	

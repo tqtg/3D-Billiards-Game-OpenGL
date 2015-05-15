@@ -6,6 +6,7 @@
 #include <cstring>
 #include <vector>
 #include <cmath>
+#include <map>
 #include "lib/SOIL.h"
 #include "Model_OBJ.h"
 
@@ -50,15 +51,17 @@ typedef struct {
  
 Model_OBJ table;
 Model_OBJ balls;
-float g_rotation;
 glutWindow win;
  
 void display() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt( -1.2,1.3,0.001, 0.3,0,0, 0,1,0);
+//	gluLookAt( -1.2,1.3,0.001, 0.3,0,0, 0,1,0);
+	gluLookAt( 0.8, 1.2, 0.8, -0.2,0,-0.2, 0,1,0);
 	
+	glRotatef(45,0,1,0);
+	glRotatef(90,0,1,0);
 	table.draw();
 	balls.draw();
 
@@ -98,14 +101,13 @@ void initialize ()
     glLightfv( GL_LIGHT1, GL_SPECULAR, specular );
     GLfloat light1_pos[] = {0, 2, 0, 1};
 	glLightfv(GL_LIGHT1, GL_POSITION, light1_pos) ;
-    glEnable( GL_LIGHT1 );
+//    glEnable( GL_LIGHT1 );
     
     glLightfv( GL_LIGHT2, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT2, GL_SPECULAR, specular );
     GLfloat light2_pos[] = {-1, 2, -1, 1};
 	glLightfv(GL_LIGHT2, GL_POSITION, light2_pos) ;
     glEnable( GL_LIGHT2 );
-    
     
     glShadeModel( GL_SMOOTH );
     glDepthFunc( GL_LEQUAL );
@@ -124,7 +126,6 @@ void keyboard ( unsigned char key, int x, int y )
       break;
   }
 }
-
  
 int main(int argc, char **argv) 
 {
@@ -148,7 +149,7 @@ int main(int argc, char **argv)
 
 	table.loadOBJ("resource/pooltable.obj", 1);
 	balls.loadOBJ("resource/threeBall.obj", 0);
-	
+//	loadTexture(&table);
 
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
