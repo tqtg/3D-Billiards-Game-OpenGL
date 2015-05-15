@@ -68,6 +68,7 @@ public:
 
 public:		
 	Model_OBJ();
+	Model_OBJ(char* objFile, bool hasTexture);
 	~Model_OBJ();
 	
 	int loadMTL(char *filename);

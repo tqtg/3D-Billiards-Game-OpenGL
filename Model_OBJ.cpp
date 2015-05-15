@@ -7,6 +7,7 @@
 
 using namespace std;
 
+
 Model_OBJ::Model_OBJ()
 {
 	this->total_vertices_floats = 0;
@@ -15,6 +16,18 @@ Model_OBJ::Model_OBJ()
 	this->hasTexture = false;
 	this->total_objects = 0;
 	this->total_materials = 0;
+}
+
+Model_OBJ::Model_OBJ(char* objFile, bool hasTexture)
+{
+	this->total_vertices_floats = 0;
+	this->total_textures_coords_floats = 0;
+	this->total_normal_vectors_floats = 0;
+	this->hasTexture = hasTexture;
+	this->total_objects = 0;
+	this->total_materials = 0;
+	
+	this->loadOBJ(objFile, hasTexture);
 }
 
 Model_OBJ::~Model_OBJ()
@@ -342,8 +355,6 @@ void Model_OBJ::draw()
 		glTexCoordPointer(2, GL_FLOAT, 0, objects[i].texts_coords);
 		glNormalPointer(GL_FLOAT, 0, objects[i].norm_vectors);						// Normal pointer to normal array
 		glDrawArrays(GL_TRIANGLES, 0, objects[i].total_triangles_floats);		// Draw the triangles
-		
-//		glDisable(GL_TEXTURE_2D);
 	}
 
 	if (hasTexture)

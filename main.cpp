@@ -7,6 +7,7 @@
 #include <vector>
 #include <cmath>
 #include <map>
+#include <list>
 #include "lib/SOIL.h"
 #include "Model_OBJ.h"
 
@@ -52,16 +53,14 @@ typedef struct {
 Model_OBJ table;
 Model_OBJ balls;
 glutWindow win;
+list<Model_OBJ> models;
  
 void display() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-//	gluLookAt( -1.2,1.3,0.001, 0.3,0,0, 0,1,0);
-	gluLookAt( 0.8, 1.2, 0.8, -0.2,0,-0.2, 0,1,0);
-	
-	glRotatef(45,0,1,0);
-	glRotatef(90,0,1,0);
+	gluLookAt( -1.2,1.3,0, 0.3,0,0, 0,1,0);
+
 	table.draw();
 	balls.draw();
 
@@ -126,7 +125,7 @@ void keyboard ( unsigned char key, int x, int y )
       break;
   }
 }
- 
+
 int main(int argc, char **argv) 
 {
 	// set window values
@@ -147,9 +146,8 @@ int main(int argc, char **argv)
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
 
-	table.loadOBJ("resource/pooltable.obj", 1);
-	balls.loadOBJ("resource/threeBall.obj", 0);
-//	loadTexture(&table);
+	table = Model_OBJ("resource/pooltable.obj", 1);
+	balls = Model_OBJ("resource/threeBall.obj", 0);
 
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
