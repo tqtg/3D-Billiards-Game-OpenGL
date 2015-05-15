@@ -15,6 +15,19 @@ using namespace std;
 #define MAX_MTL 10
 #define MAX_OBJ 50
 
+
+/************************************************************************
+  Texture
+ ************************************************************************/
+ 
+typedef struct {
+	unsigned char* image;
+	int width;
+	int height;
+} texture;
+
+map<string, texture> textures;
+
 /************************************************************************
   Window
  ************************************************************************/
@@ -35,8 +48,8 @@ typedef struct {
  * Program code
  ***************************************************************************/
  
-Model_OBJ ball;
 Model_OBJ table;
+Model_OBJ balls;
 float g_rotation;
 glutWindow win;
  
@@ -44,15 +57,11 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt( 0.8, 1.2, 0.8, -0.2,0,-0.2, 0,1,0);
-//	gluLookAt( 50, 150, 80, -0.2,0,-0.2, 0,1,0);
-	glPushMatrix();
-		glRotatef(45,0,1,0);
-		glRotatef(90,0,1,0);
-	//	g_rotation++;
-//		ball.Draw();
-//		table.Draw();
-	glPopMatrix();
+	gluLookAt( -1.2,1.3,0.001, 0.3,0,0, 0,1,0);
+	
+	table.draw();
+	balls.draw();
+
 	glutSwapBuffers();
 }
 
@@ -89,7 +98,7 @@ void initialize ()
     glLightfv( GL_LIGHT1, GL_SPECULAR, specular );
     GLfloat light1_pos[] = {0, 2, 0, 1};
 	glLightfv(GL_LIGHT1, GL_POSITION, light1_pos) ;
-//    glEnable( GL_LIGHT1 );
+    glEnable( GL_LIGHT1 );
     
     glLightfv( GL_LIGHT2, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT2, GL_SPECULAR, specular );
@@ -117,7 +126,14 @@ void keyboard ( unsigned char key, int x, int y )
   }
 }
 
-
+void loadTextures()
+{
+//	map<string, material>::iterator it;
+//	for (it = table.materials.begin(); it != table.materials.end(); it++)
+//	{
+//		
+//	}
+}
  
 int main(int argc, char **argv) 
 {
@@ -138,11 +154,12 @@ int main(int argc, char **argv)
 	glutIdleFunc( display );									// register Idle Function
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
-	
-//	ball.loadMTL("resource/pooltable.mtl");
-//	ball.LoadOBJ("resource/threeball.obj");
+
+
 	table.loadOBJ("resource/pooltable.obj", 1);
-	
+	balls.loadOBJ("resource/threeBall.obj", 0);
+//	loadTextures();
+
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
 }

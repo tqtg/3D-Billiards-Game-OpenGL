@@ -1,7 +1,12 @@
+#include <windows.h>
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <queue>
 #include <map>
+#include <GL/glut.h>
 
+#define MAX_MTL
 #define MAX_OBJ 50
 
 using namespace std;
@@ -42,7 +47,7 @@ typedef struct {
 class Model_OBJ
 {
 private:
-	map<string, material> materials;
+	
 	object objects[MAX_OBJ];
 	
 	float* vertexBuffer;
@@ -51,7 +56,11 @@ private:
 	
 	bool hasTexture;
 	long total_vertices_floats;
+	long total_textures_coords_floats;
+	long total_normal_vectors_floats;
 	int total_objects;
+public:
+	map<string, material> materials;
 
 public:		
 	Model_OBJ();
@@ -59,4 +68,5 @@ public:
 	
 	int loadMTL(char *filename);
 	void loadOBJ(char *filename, bool hasTexture);
+	void draw();
 };
