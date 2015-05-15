@@ -3,7 +3,8 @@
 #define FLOATS_PER_VERTEX 3
 #define VERTICES_PER_FACE 3
 #define FLOATS_PER_TRIANGLE 9
-#define FLOATS_PER_TEXTURE_COOR 6
+#define FLOATS_PER_TEXTURE_COOR 2
+#define FLOATS_PER_TEXTURES_COORS 6
 
 using namespace std;
 
@@ -245,7 +246,7 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 						tCounter += 2;
 					} 
 					
-					obj_textures_floats += FLOATS_PER_TEXTURE_COOR;
+					obj_textures_floats += FLOATS_PER_TEXTURES_COORS;
 				}
 				else
 				{
