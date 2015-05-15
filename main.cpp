@@ -138,9 +138,11 @@ int main(int argc, char **argv)
 	glutIdleFunc( display );									// register Idle Function
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
-	ball.loadMTL("resource/pooltable.mtl");
+	
+//	ball.loadMTL("resource/pooltable.mtl");
 //	ball.LoadOBJ("resource/threeball.obj");
-//	table.LoadOBJ("resource/pooltable.obj");
+	table.loadOBJ("resource/pooltable.obj", 1);
+	
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
 }

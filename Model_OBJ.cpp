@@ -1,13 +1,19 @@
 #include "Model_OBJ.h"
+#include <windows.h>
 #include <iostream>
 #include <fstream>
 #include <map>
+
+#define FLOATS_PER_VERTEX 3
+#define FLOATS_PER_TRIANGLE 9
 
 using namespace std;
 
 Model_OBJ::Model_OBJ()
 {
-	
+	this->total_vertices_floats = 0;
+	this->hasTexture = false;
+	this->total_objects = 0;
 }
 
 Model_OBJ::~Model_OBJ()
@@ -15,10 +21,11 @@ Model_OBJ::~Model_OBJ()
 	
 }
 
-void Model_OBJ::loadMTL(char *filename)
+int Model_OBJ::loadMTL(char* filename)
 {
 	cout << "MTL is loading ...\n";
 	
+	int nMtl = 0;
 	string line;
 	ifstream mtlFile (filename);
 	
@@ -42,6 +49,7 @@ void Model_OBJ::loadMTL(char *filename)
 				
 				material mtl;
 				materials.insert(pair<string, material>(mtlName, mtl));
+				nMtl++;
 			}
 			else if (type.compare("Ns") == 0)
 			{
@@ -94,5 +102,93 @@ void Model_OBJ::loadMTL(char *filename)
 				cout << "map_Kd " << it->second.texture << endl;
 			}
 		}	
+		
+		mtlFile.close();
+	}
+	
+	return nMtl;
+}
+
+void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
+{
+	this->hasTexture = hasTexture;
+	
+	string line;
+	ifstream objFile (filename);
+	
+	queue<object> objs;
+	
+	if (!objFile.is_open())
+	{
+		cout << "Unable to open file!";
+	}
+	else
+	{
+		objFile.seekg (0, ios::end);										
+		long fileSize = objFile.tellg();
+		objFile.seekg (0, ios::beg);
+		
+		vertexBuffer = (float*) malloc (fileSize);
+		vtBuffer = (float*) malloc (fileSize);
+		vnBuffer = (float*) malloc (fileSize);
+		
+		while (!objFile.eof())
+		{
+			getline(objFile, line);
+			string type = line.substr(0,2);
+			
+			//	Load material file
+			if (type.compare("mt") == 0)
+			{
+				string l = "mtllib ";
+				string mtlFile = line.substr(l.size());
+				mtlFile = "resource/" + mtlFile;
+				
+				const char* cstr = mtlFile.c_str();
+				cout << "Number of mtl: " << loadMTL(cstr) << endl;
+			}
+			
+			// Create new object
+			else if (type.compare("us") == 0)
+			{
+				object obj;
+				string l = "usemtl ";
+				
+				objects[total_objects].material = (line.substr(l.size())).c_str();
+				objects[total_objects].total_triangles_floats = 0;
+				objects[total_objects].faces_triangles = (float*) malloc (fileSize);
+				objects[total_objects].texts_coords = (float*) malloc (fileSize);
+				objects[total_objects].norm_vectors = (float*) malloc (fileSize);
+				
+				total_objects++;		
+			}
+			
+			//	Read vertex
+			else if (type.compare("v ") == 0)
+			{
+				float vertices[3];
+				sscanf(line.c_str(), "v %f %f %f", 
+					&vertexBuffer[total_vertices_floats], 
+					&vertexBuffer[total_vertices_floats + 1], 
+					&vertexBuffer[total_vertices_floats + 2]);
+				
+//				cout << vertices[0] << " " << vertices[1] << " " << vertices[2] << endl;
+				
+//				vertexBuffer[total_vertices_floats] = vertices[0];
+//				vertexBuffer[total_vertices_floats + 1] = vertices[1];
+//				vertexBuffer[total_vertices_floats + 2] = vertices[2];
+//					
+				total_vertices_floats += FLOATS_PER_VERTEX;			
+			}
+		}
+		
+//		while (!objs.empty())
+//		{
+//			this->objects.push(objs.front());
+//			objs.pop();	
+//		}
+		
+		objFile.close();
 	}
 }
+
