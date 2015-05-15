@@ -320,6 +320,11 @@ void Model_OBJ::draw()
 		
 		if (mtl->hasTexture)
 		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+			
 			if (mtl->texture.compare(materials[0].texture) == 0)
 			{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img1);
@@ -328,13 +333,9 @@ void Model_OBJ::draw()
 			{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img2);
 			}
-		
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-		 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+			
 		 	glEnable(GL_TEXTURE_2D);
+		 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		}
 		else
 		{
@@ -351,10 +352,10 @@ void Model_OBJ::draw()
 		glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
 		glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 		
-		glVertexPointer(3, GL_FLOAT, 0, objects[i].faces_triangles);			
-		glTexCoordPointer(2, GL_FLOAT, 0, objects[i].texts_coords);				
-		glNormalPointer(GL_FLOAT, 0, objects[i].norm_vectors);					
-		glDrawArrays(GL_TRIANGLES, 0, objects[i].total_triangles_floats);		
+		glVertexPointer(3, GL_FLOAT, 0, objects[i].faces_triangles);				// Vertex Pointer to triangle array
+		glTexCoordPointer(2, GL_FLOAT, 0, objects[i].texts_coords);
+		glNormalPointer(GL_FLOAT, 0, objects[i].norm_vectors);						// Normal pointer to normal array
+		glDrawArrays(GL_TRIANGLES, 0, objects[i].total_triangles_floats);		// Draw the triangles
 	}
 
 	if (hasTexture)
