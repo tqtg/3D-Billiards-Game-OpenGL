@@ -61,9 +61,6 @@ void display()
 	glLoadIdentity();
 	gluLookAt( -1.2,1.3,0, 0.3,0,0, 0,1,0);
 
-	// Implement update before draw
-	//	ball.update
-
 	table.draw();
 	balls.draw();
 
