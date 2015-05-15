@@ -14,6 +14,7 @@ Model_OBJ::Model_OBJ()
 	this->total_normal_vectors_floats = 0;
 	this->hasTexture = false;
 	this->total_objects = 0;
+	this->total_materials = 0;
 }
 
 Model_OBJ::~Model_OBJ()
@@ -25,7 +26,7 @@ int Model_OBJ::loadMTL(char* filename)
 {
 	cout << "MTL is loading ...\n";
 	
-	int nMtl = 0;
+	int nMtl = -1;
 	string line;
 	ifstream mtlFile (filename);
 	
@@ -43,66 +44,55 @@ int Model_OBJ::loadMTL(char* filename)
 			
 			if (type.compare("ne") == 0)
 			{
-				string l = "newmtl ";
-				mtlName = line.substr(l.size());
-				cout << "newmtl " << mtlName << endl;
-				
-				material mtl;
-				materials.insert(pair<string, material>(mtlName, mtl));
 				nMtl++;
+				string l = "newmtl ";
+				materials[nMtl].name = line.substr(l.size());
+				cout << "newmtl " << materials[nMtl].name << endl;
 			}
 			else if (type.compare("Ns") == 0)
 			{
-				map<string, material>::iterator it = materials.find(mtlName);
-				sscanf(line.c_str(), "Ns %f", &(it->second.Ns));
-				cout << "Ns " << it->second.Ns << endl;
+				sscanf(line.c_str(), "Ns %f", &(materials[nMtl].Ns));
+				cout << "Ns " << materials[nMtl].Ns << endl;
 			}
 			else if (type.compare("Ka") == 0)
 			{
-				map<string, material>::iterator it = materials.find(mtlName);
-				sscanf(line.c_str(), "Ka %f %f %f", &(it->second.Ka[0]), &(it->second.Ka[1]), &(it->second.Ka[2]));
-				cout << "Ka " << it->second.Ka[0] << " " << it->second.Ka[1] << " " << it->second.Ka[2] << endl;
+				sscanf(line.c_str(), "Ka %f %f %f", &(materials[nMtl].Ka[0]), &(materials[nMtl].Ka[1]), &(materials[nMtl].Ka[2]));
+				cout << "Ka " << materials[nMtl].Ka[0] << " " << materials[nMtl].Ka[1] << " " << materials[nMtl].Ka[2] << endl;
 			}
 			else if (type.compare("Kd") == 0)
 			{
-				map<string, material>::iterator it = materials.find(mtlName);
-				sscanf(line.c_str(), "Kd %f %f %f", &(it->second.Kd[0]), &(it->second.Kd[1]), &(it->second.Kd[2]));
-				cout << "Kd " << it->second.Kd[0] << " " << it->second.Kd[1] << " " << it->second.Kd[2] << endl;
+				sscanf(line.c_str(), "Kd %f %f %f", &(materials[nMtl].Kd[0]), &(materials[nMtl].Kd[1]), &(materials[nMtl].Kd[2]));
+				cout << "Kd " << materials[nMtl].Kd[0] << " " << materials[nMtl].Kd[1] << " " << materials[nMtl].Kd[2] << endl;
 			}
 			else if (type.compare("Ks") == 0)
 			{
-				map<string, material>::iterator it = materials.find(mtlName);
-				sscanf(line.c_str(), "Ks %f %f %f", &(it->second.Ks[0]), &(it->second.Ks[1]), &(it->second.Ks[2]));
-				cout << "Ks " << it->second.Ks[0] << " " << it->second.Ks[1] << " " << it->second.Ks[2] << endl;
+				sscanf(line.c_str(), "Ks %f %f %f", &(materials[nMtl].Ks[0]), &(materials[nMtl].Ks[1]), &(materials[nMtl].Ks[2]));
+				cout << "Ks " << materials[nMtl].Ks[0] << " " << materials[nMtl].Ks[1] << " " << materials[nMtl].Ks[2] << endl;
 			}
 			else if (type.compare("Ni") == 0)
 			{
-				map<string, material>::iterator it = materials.find(mtlName);
-				sscanf(line.c_str(), "Ni %f", &(it->second.Ni));
-				cout << "Ni " << it->second.Ni << endl;
+				sscanf(line.c_str(), "Ni %f", &(materials[nMtl].Ni));
+				cout << "Ni " << materials[nMtl].Ni << endl;
 			}
 			else if (type.compare("d ") == 0)
 			{
-				map<string, material>::iterator it = materials.find(mtlName);
-				sscanf(line.c_str(), "d %f", &(it->second.d));
-				cout << "d " << it->second.d << endl;
+				sscanf(line.c_str(), "d %f", &(materials[nMtl].d));
+				cout << "d " << materials[nMtl].d << endl;
 			}
 			else if (type.compare("il") == 0)
 			{
-				map<string, material>::iterator it = materials.find(mtlName);
-				sscanf(line.c_str(), "illum %d", &(it->second.illum));
-				cout << "illum " << it->second.illum << endl;
+				sscanf(line.c_str(), "illum %d", &(materials[nMtl].illum));
+				cout << "illum " << materials[nMtl].illum << endl;
 			}
 			else if (type.compare("ma") == 0)
 			{
 				string l = "map_Kd ";
-				string texture = line.substr(l.size());
-				map<string, material>::iterator it = materials.find(mtlName);
-				it->second.texture = texture.c_str();
-				cout << "map_Kd " << it->second.texture << endl;
+				materials[nMtl].texture = line.substr(l.size());
+				cout << "map_Kd " << materials[nMtl].texture << endl;
 			}
 		}	
 		
+		nMtl++;
 		mtlFile.close();
 	}
 	
@@ -149,6 +139,7 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 				mtlFile = "resource/" + mtlFile;
 				
 				const char* cstr = mtlFile.c_str();
+				total_materials = loadMTL(cstr);
 				cout << "Number of mtl: " << loadMTL(cstr) << endl;
 			}
 			
@@ -159,8 +150,16 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 				obj_normal_vectors_index = 0;
 				obj = &objects[total_objects];
 				string l = "usemtl ";
+				string mtlName = line.substr(l.size());
 				
-				objects[total_objects].material = (line.substr(l.size())).c_str();
+				for (int i = 0; i < total_materials; i++)
+				{
+					if (mtlName.compare(string(materials[i].name)) == 0)
+					{
+						obj->material = &materials[i];
+					}
+				}
+				
 				obj->total_triangles_floats = 0;
 				obj->faces_triangles = (float*) malloc (fileSize);
 				obj->norm_vectors = (float*) malloc (fileSize);
@@ -168,8 +167,8 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 				{
 					obj->texts_coords = (float*) malloc (fileSize);
 				}
-				
-				total_objects++;		
+						
+				total_objects++;
 			}
 			
 			//	Read vertex
@@ -287,13 +286,17 @@ void Model_OBJ::draw()
 	
 	for (int i = 0; i < total_objects; i++)
 	{
-//		string name(objects[i].material);
-////		material* mtl = &(materials.find("04_-_Default")->second);
-//		
-//		if (!hasTexture)
-//		{
-//			cout << name << endl;
-//		}
+		material* mtl = objects[i].material;
+		
+		float ambient[] = {mtl->Ka[0], mtl->Ka[1], mtl->Ka[2], 1.0};
+		float diffuse[] = {mtl->Kd[0], mtl->Kd[1], mtl->Kd[2], 1.0};
+		float specular[] = {mtl->Ks[0], mtl->Ks[1], mtl->Ks[2], 1.0};
+		float shininess = mtl->Ns;
+
+		glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+		glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 		
 		glVertexPointer(3, GL_FLOAT, 0, objects[i].faces_triangles);				// Vertex Pointer to triangle array
 		glTexCoordPointer(2, GL_FLOAT, 0, objects[i].texts_coords);

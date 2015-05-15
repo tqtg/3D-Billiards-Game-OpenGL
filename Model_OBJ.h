@@ -6,7 +6,7 @@
 #include <map>
 #include <GL/glut.h>
 
-#define MAX_MTL
+#define MAX_MTL 10
 #define MAX_OBJ 50
 
 using namespace std;
@@ -16,6 +16,7 @@ using namespace std;
  ************************************************************************/
  
 typedef struct {
+	string name;
     float Ns;
     float Ka[3];
     float Kd[3];
@@ -23,7 +24,7 @@ typedef struct {
     float Ni;
     float d;
     int illum;
-    char* texture;
+    string texture;
 } material;
 
 
@@ -32,7 +33,7 @@ typedef struct {
  ************************************************************************/
  
 typedef struct {
-	char* material;
+	material* material;
 	float* faces_triangles;
 	float* texts_coords;
 	float* norm_vectors;
@@ -59,8 +60,10 @@ private:
 	long total_textures_coords_floats;
 	long total_normal_vectors_floats;
 	int total_objects;
+	int total_materials;
 public:
-	map<string, material> materials;
+	material materials[MAX_MTL];
+	
 
 public:		
 	Model_OBJ();

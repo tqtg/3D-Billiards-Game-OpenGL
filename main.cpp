@@ -108,7 +108,6 @@ void initialize ()
     
     
     glShadeModel( GL_SMOOTH );
-//    glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE );
     glDepthFunc( GL_LEQUAL );
     glEnable( GL_DEPTH_TEST );
     glEnable(GL_LIGHTING);
@@ -126,14 +125,6 @@ void keyboard ( unsigned char key, int x, int y )
   }
 }
 
-void loadTextures()
-{
-//	map<string, material>::iterator it;
-//	for (it = table.materials.begin(); it != table.materials.end(); it++)
-//	{
-//		
-//	}
-}
  
 int main(int argc, char **argv) 
 {
@@ -144,7 +135,7 @@ int main(int argc, char **argv)
 	win.field_of_view_angle = 30;
 	win.z_near = 1.0f;
 	win.z_far = 500.0f;
- 
+	
 	// initialize and run program
 	glutInit(&argc, argv);                                      // GLUT initialization
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );  // Display Mode
@@ -155,10 +146,9 @@ int main(int argc, char **argv)
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
 
-
 	table.loadOBJ("resource/pooltable.obj", 1);
 	balls.loadOBJ("resource/threeBall.obj", 0);
-//	loadTextures();
+	
 
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
