@@ -58,7 +58,7 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt( -1.2,1.3,0, 0.3,0,0, 0,1,0);
+	gluLookAt( -1.1,1.1,0, 0.3,0,0, 0,1,0);
 
 	//	Draw floor
 	drawFloor();
