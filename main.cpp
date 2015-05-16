@@ -19,18 +19,6 @@ using namespace std;
 
 
 /************************************************************************
-  Texture
- ************************************************************************/
- 
-typedef struct {
-	unsigned char* image;
-	int width;
-	int height;
-} texture;
-
-map<string, texture> textures;
-
-/************************************************************************
   Window
  ************************************************************************/
  
@@ -53,7 +41,7 @@ typedef struct {
 Model_OBJ table;
 Model_OBJ balls;
 glutWindow win;
-list<Model_OBJ> models;
+map<string, texture> textures;
  
 void display() 
 {
@@ -62,44 +50,44 @@ void display()
 	gluLookAt( -1.2,1.3,0, 0.3,0,0, 0,1,0);
 
 	//	Draw floor
-	glColor3f(1,0,0);
-	glPushMatrix();
-	//glRotatef(0,0,0,1);
-	//glScalef(2,1,2);
-	glBegin(GL_QUADS);
-	/* Floor */
-	glVertex3f(-1,-1,-1);
-	glVertex3f(1,-1,-1);
-	glVertex3f(1,-1,1);
-	glVertex3f(-1,-1,1);
-	/* Ceiling */
-	glVertex3f(-1,1,-1);
-	glVertex3f(1,1,-1);
-	glVertex3f(1,1,1);
-	glVertex3f(-1,1,1);
-	    /* Walls */
-	glVertex3f(-1,-1,1);
-	glVertex3f(1,-1,1);
-	glVertex3f(1,1,1);
-	glVertex3f(-1,1,1);
-	
-	glVertex3f(-1,-1,-1);
-	glVertex3f(1,-1,-1);
-	glVertex3f(1,1,-1);
-	glVertex3f(-1,1,-1);
-	
-	glVertex3f(1,1,1);
-	glVertex3f(1,-1,1);
-	glVertex3f(1,-1,-1);
-	glVertex3f(1,1,-1);
-	
-	glVertex3f(-1,1,1);
-	glVertex3f(-1,-1,1);
-	glVertex3f(-1,-1,-1);
-	glVertex3f(-1,1,-1);
-	glEnd();
-	
-	glPopMatrix();
+//	glColor3f(1,0,0);
+//	glPushMatrix();
+//	//glRotatef(0,0,0,1);
+//	//glScalef(2,1,2);
+//	glBegin(GL_QUADS);
+//	/* Floor */
+//	glVertex3f(-1,-1,-1);
+//	glVertex3f(1,-1,-1);
+//	glVertex3f(1,-1,1);
+//	glVertex3f(-1,-1,1);
+//	/* Ceiling */
+//	glVertex3f(-1,1,-1);
+//	glVertex3f(1,1,-1);
+//	glVertex3f(1,1,1);
+//	glVertex3f(-1,1,1);
+//	    /* Walls */
+//	glVertex3f(-1,-1,1);
+//	glVertex3f(1,-1,1);
+//	glVertex3f(1,1,1);
+//	glVertex3f(-1,1,1);
+//	
+//	glVertex3f(-1,-1,-1);
+//	glVertex3f(1,-1,-1);
+//	glVertex3f(1,1,-1);
+//	glVertex3f(-1,1,-1);
+//	
+//	glVertex3f(1,1,1);
+//	glVertex3f(1,-1,1);
+//	glVertex3f(1,-1,-1);
+//	glVertex3f(1,1,-1);
+//	
+//	glVertex3f(-1,1,1);
+//	glVertex3f(-1,-1,1);
+//	glVertex3f(-1,-1,-1);
+//	glVertex3f(-1,1,-1);
+//	glEnd();
+//	
+//	glPopMatrix();
 
 	//	Draw objects
 	table.draw();
@@ -187,8 +175,8 @@ int main(int argc, char **argv)
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
 
-	table = Model_OBJ("resource/pooltable.obj", 1);
-	balls = Model_OBJ("resource/threeBall.obj", 0);
+	table = Model_OBJ("resource/pooltable.obj", 1, &textures);
+	balls = Model_OBJ("resource/threeBall.obj", 0, &textures);
 
 	glutMainLoop();												// run GLUT mainloop
 	return 0;

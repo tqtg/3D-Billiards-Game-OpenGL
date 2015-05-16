@@ -12,6 +12,7 @@
 
 using namespace std;
 
+
 /************************************************************************
   Material
  ************************************************************************/
@@ -44,14 +45,27 @@ typedef struct {
 
 
 /************************************************************************
+  Texture
+ ************************************************************************/
+ 
+typedef struct {
+	unsigned char* image;
+	int width;
+	int height;
+} texture;
+
+
+
+/************************************************************************
   Model
  ************************************************************************/
 
 class Model_OBJ
 {
 private:
-	
+	material materials[MAX_MTL];
 	object objects[MAX_OBJ];
+	map<string, texture>* textures;
 	
 	float* vertexBuffer;
 	float* vtBuffer;
@@ -62,13 +76,13 @@ private:
 	long total_textures_coords_floats;
 	long total_normal_vectors_floats;
 	int total_objects;
-public:
-	material materials[MAX_MTL];
 	int total_materials;
+	
+public:
 
 public:		
 	Model_OBJ();
-	Model_OBJ(char* objFile, bool hasTexture);
+	Model_OBJ(char* objFile, bool hasTexture, map<string, texture>* textures);
 	~Model_OBJ();
 	
 	int loadMTL(char *filename);

@@ -19,7 +19,7 @@ Model_OBJ::Model_OBJ()
 	this->total_materials = 0;
 }
 
-Model_OBJ::Model_OBJ(char* objFile, bool hasTexture)
+Model_OBJ::Model_OBJ(char* objFile, bool hasTexture, map<string, texture>* textures)
 {
 	this->total_vertices_floats = 0;
 	this->total_textures_coords_floats = 0;
@@ -27,6 +27,7 @@ Model_OBJ::Model_OBJ(char* objFile, bool hasTexture)
 	this->hasTexture = hasTexture;
 	this->total_objects = 0;
 	this->total_materials = 0;
+	this->textures = textures;
 	
 	this->loadOBJ(objFile, hasTexture);
 }
@@ -105,8 +106,19 @@ int Model_OBJ::loadMTL(char* filename)
 				materials[nMtl].hasTexture = true;
 				
 				string l = "map_Kd ";
-				materials[nMtl].texture = line.substr(l.size());
+				string textureName = line.substr(l.size());
+				
+				materials[nMtl].texture = textureName;
 				cout << "map_Kd " << materials[nMtl].texture << endl;
+				
+				map<string, texture>::iterator it = textures->find(textureName);
+				if (it == textures->end())
+				{
+					texture tex;
+					string texturePath = "resource/" + textureName;
+					tex.image = SOIL_load_image(texturePath.c_str(), &(tex.width), &(tex.height), NULL, 0);
+					textures->insert(it, pair<string, texture>(textureName, tex));
+				}
 			}
 		}	
 		
@@ -300,20 +312,6 @@ void Model_OBJ::draw()
  	glEnableClientState(GL_NORMAL_ARRAY);						
  	glEnableClientState (GL_TEXTURE_COORD_ARRAY);			
 	
-	int width;
-	int height;
- 	unsigned char* img1;
- 	unsigned char* img2;
- 	
- 	if (hasTexture)
- 	{
- 		string texture1 = "resource/" + materials[0].texture;
- 		string texture2 = "resource/" + materials[1].texture;
- 		
- 		img1 = SOIL_load_image(texture1.c_str(), &width, &height, NULL, 0);
- 		img2 = SOIL_load_image(texture2.c_str(), &width, &height, NULL, 0);
- 	}
-	
 	for (int i = 0; i < total_objects; i++)
 	{
 		material* mtl = objects[i].material;
@@ -325,14 +323,8 @@ void Model_OBJ::draw()
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 			
-			if (mtl->texture.compare(materials[0].texture) == 0)
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img1);
-			}
-			else if (mtl->texture.compare(materials[1].texture) == 0)
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, img2);
-			}
+			texture tex = textures->find(mtl->texture)->second;
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex.width, tex.height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex.image);
 			
 		 	glEnable(GL_TEXTURE_2D);
 		 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -356,12 +348,6 @@ void Model_OBJ::draw()
 		glTexCoordPointer(2, GL_FLOAT, 0, objects[i].texts_coords);
 		glNormalPointer(GL_FLOAT, 0, objects[i].norm_vectors);						// Normal pointer to normal array
 		glDrawArrays(GL_TRIANGLES, 0, objects[i].total_triangles_floats);		// Draw the triangles
-	}
-
-	if (hasTexture)
-	{
-		SOIL_free_image_data(img1);
-		SOIL_free_image_data(img2);
 	}
 	
 	glDisableClientState(GL_VERTEX_ARRAY);					
