@@ -14,8 +14,6 @@
 using namespace std;
 
 #define KEY_ESCAPE 27
-#define MAX_MTL 10
-#define MAX_OBJ 50
 
 
 /************************************************************************
