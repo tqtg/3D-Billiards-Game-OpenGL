@@ -50,44 +50,16 @@ void display()
 	gluLookAt( -1.2,1.3,0, 0.3,0,0, 0,1,0);
 
 	//	Draw floor
-	glColor3f(1,0,0);
-	glPushMatrix();
-	//glRotatef(0,0,0,1);
-	//glScalef(2,1,2);
-	glBegin(GL_QUADS);
-	/* Floor */
-	glVertex3f(-1,-1,-1);
-	glVertex3f(1,-1,-1);
-	glVertex3f(1,-1,1);
-	glVertex3f(-1,-1,1);
-	/* Ceiling */
-	glVertex3f(-1,1,-1);
-	glVertex3f(1,1,-1);
-	glVertex3f(1,1,1);
-	glVertex3f(-1,1,1);
-	    /* Walls */
-	glVertex3f(-1,-1,1);
-	glVertex3f(1,-1,1);
-	glVertex3f(1,1,1);
-	glVertex3f(-1,1,1);
-	
-	glVertex3f(-1,-1,-1);
-	glVertex3f(1,-1,-1);
-	glVertex3f(1,1,-1);
-	glVertex3f(-1,1,-1);
-	
-	glVertex3f(1,1,1);
-	glVertex3f(1,-1,1);
-	glVertex3f(1,-1,-1);
-	glVertex3f(1,1,-1);
-	
-	glVertex3f(-1,1,1);
-	glVertex3f(-1,-1,1);
-	glVertex3f(-1,-1,-1);
-	glVertex3f(-1,1,-1);
+	glColor3f(0.0, 0.0, 0.0);
+	glBegin(GL_LINES);
+	for (GLfloat i = -2.5; i <= 2.5; i += 0.25) {
+		glVertex3f(i, 0, 2.5); 
+		glVertex3f(i, 0, -2.5);
+	    
+		glVertex3f(2.5, 0, i); 
+		glVertex3f(-2.5, 0, i);
+	}
 	glEnd();
-	
-	glPopMatrix();
 
 	//	Draw objects
 	table.draw();
@@ -106,8 +78,8 @@ void initialize ()
     glLoadIdentity();
 	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
     glMatrixMode(GL_MODELVIEW);
-    glClearColor( 0.0f, 0.1f, 0.0f, 0.5f );
-    glClearDepth( 1.0f );
+    glClearColor( 0.29, 0.3, 0.313, 1.0 );
+//    glClearDepth( 1.0f );
     
     glEnable( GL_DEPTH_TEST );
     glDepthFunc( GL_LEQUAL );
