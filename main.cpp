@@ -61,6 +61,47 @@ void display()
 	glLoadIdentity();
 	gluLookAt( -1.2,1.3,0, 0.3,0,0, 0,1,0);
 
+	//	Draw floor
+	glColor3f(1,0,0);
+	glPushMatrix();
+	//glRotatef(0,0,0,1);
+	//glScalef(2,1,2);
+	glBegin(GL_QUADS);
+	/* Floor */
+	glVertex3f(-1,-1,-1);
+	glVertex3f(1,-1,-1);
+	glVertex3f(1,-1,1);
+	glVertex3f(-1,-1,1);
+	/* Ceiling */
+	glVertex3f(-1,1,-1);
+	glVertex3f(1,1,-1);
+	glVertex3f(1,1,1);
+	glVertex3f(-1,1,1);
+	    /* Walls */
+	glVertex3f(-1,-1,1);
+	glVertex3f(1,-1,1);
+	glVertex3f(1,1,1);
+	glVertex3f(-1,1,1);
+	
+	glVertex3f(-1,-1,-1);
+	glVertex3f(1,-1,-1);
+	glVertex3f(1,1,-1);
+	glVertex3f(-1,1,-1);
+	
+	glVertex3f(1,1,1);
+	glVertex3f(1,-1,1);
+	glVertex3f(1,-1,-1);
+	glVertex3f(1,1,-1);
+	
+	glVertex3f(-1,1,1);
+	glVertex3f(-1,-1,1);
+	glVertex3f(-1,-1,-1);
+	glVertex3f(-1,1,-1);
+	glEnd();
+	
+	glPopMatrix();
+
+	//	Draw objects
 	table.draw();
 	balls.draw();
 

@@ -9,7 +9,7 @@ Ks 0.449020 0.449020 0.449020
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Felt.jpg
+map_Kd felt.jpg
 
 newmtl 03_-_Default
 Ns 96.078431
