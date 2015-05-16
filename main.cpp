@@ -43,6 +43,17 @@ Model_OBJ balls;
 glutWindow win;
 map<string, texture> textures;
  
+void drawFloor()
+{
+	glColor3f(1.0, 1.0, 1.0);
+	glBegin(GL_LINES);
+	for (GLfloat i = -2.5; i <= 2.5; i += 0.25) {
+	    glVertex3f(i, 0, 2.5); glVertex3f(i, 0, -2.5);
+		glVertex3f(2.5, 0, i); glVertex3f(-2.5, 0, i);
+	}
+	glEnd();
+}
+ 
 void display() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -50,16 +61,7 @@ void display()
 	gluLookAt( -1.2,1.3,0, 0.3,0,0, 0,1,0);
 
 	//	Draw floor
-	glColor3f(0.0, 0.0, 0.0);
-	glBegin(GL_LINES);
-	for (GLfloat i = -2.5; i <= 2.5; i += 0.25) {
-		glVertex3f(i, 0, 2.5); 
-		glVertex3f(i, 0, -2.5);
-	    
-		glVertex3f(2.5, 0, i); 
-		glVertex3f(-2.5, 0, i);
-	}
-	glEnd();
+	drawFloor();
 
 	//	Draw objects
 	table.draw();
