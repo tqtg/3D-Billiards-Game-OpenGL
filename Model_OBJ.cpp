@@ -323,8 +323,8 @@ void Model_OBJ::draw()
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 			
-			texture tex = textures->find(mtl->texture)->second;
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex.width, tex.height, 0, GL_RGB, GL_UNSIGNED_BYTE, tex.image);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures->find(mtl->texture)->second).width, (textures->find(mtl->texture)->second).height,
+						 0, GL_RGB, GL_UNSIGNED_BYTE, (textures->find(mtl->texture)->second).image);
 			
 		 	glEnable(GL_TEXTURE_2D);
 		 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
