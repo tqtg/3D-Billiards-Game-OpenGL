@@ -1,2 +1,0 @@
-pooltable.obj 1
-threeBall.obj 0

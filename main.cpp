@@ -50,44 +50,44 @@ void display()
 	gluLookAt( -1.2,1.3,0, 0.3,0,0, 0,1,0);
 
 	//	Draw floor
-//	glColor3f(1,0,0);
-//	glPushMatrix();
-//	//glRotatef(0,0,0,1);
-//	//glScalef(2,1,2);
-//	glBegin(GL_QUADS);
-//	/* Floor */
-//	glVertex3f(-1,-1,-1);
-//	glVertex3f(1,-1,-1);
-//	glVertex3f(1,-1,1);
-//	glVertex3f(-1,-1,1);
-//	/* Ceiling */
-//	glVertex3f(-1,1,-1);
-//	glVertex3f(1,1,-1);
-//	glVertex3f(1,1,1);
-//	glVertex3f(-1,1,1);
-//	    /* Walls */
-//	glVertex3f(-1,-1,1);
-//	glVertex3f(1,-1,1);
-//	glVertex3f(1,1,1);
-//	glVertex3f(-1,1,1);
-//	
-//	glVertex3f(-1,-1,-1);
-//	glVertex3f(1,-1,-1);
-//	glVertex3f(1,1,-1);
-//	glVertex3f(-1,1,-1);
-//	
-//	glVertex3f(1,1,1);
-//	glVertex3f(1,-1,1);
-//	glVertex3f(1,-1,-1);
-//	glVertex3f(1,1,-1);
-//	
-//	glVertex3f(-1,1,1);
-//	glVertex3f(-1,-1,1);
-//	glVertex3f(-1,-1,-1);
-//	glVertex3f(-1,1,-1);
-//	glEnd();
-//	
-//	glPopMatrix();
+	glColor3f(1,0,0);
+	glPushMatrix();
+	//glRotatef(0,0,0,1);
+	//glScalef(2,1,2);
+	glBegin(GL_QUADS);
+	/* Floor */
+	glVertex3f(-1,-1,-1);
+	glVertex3f(1,-1,-1);
+	glVertex3f(1,-1,1);
+	glVertex3f(-1,-1,1);
+	/* Ceiling */
+	glVertex3f(-1,1,-1);
+	glVertex3f(1,1,-1);
+	glVertex3f(1,1,1);
+	glVertex3f(-1,1,1);
+	    /* Walls */
+	glVertex3f(-1,-1,1);
+	glVertex3f(1,-1,1);
+	glVertex3f(1,1,1);
+	glVertex3f(-1,1,1);
+	
+	glVertex3f(-1,-1,-1);
+	glVertex3f(1,-1,-1);
+	glVertex3f(1,1,-1);
+	glVertex3f(-1,1,-1);
+	
+	glVertex3f(1,1,1);
+	glVertex3f(1,-1,1);
+	glVertex3f(1,-1,-1);
+	glVertex3f(1,1,-1);
+	
+	glVertex3f(-1,1,1);
+	glVertex3f(-1,-1,1);
+	glVertex3f(-1,-1,-1);
+	glVertex3f(-1,1,-1);
+	glEnd();
+	
+	glPopMatrix();
 
 	//	Draw objects
 	table.draw();
@@ -127,9 +127,9 @@ void initialize ()
     
     glLightfv( GL_LIGHT1, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT1, GL_SPECULAR, specular );
-    GLfloat light1_pos[] = {0, 2, 0, 1};
+    GLfloat light1_pos[] = {0, 5, 0, 1};
 	glLightfv(GL_LIGHT1, GL_POSITION, light1_pos) ;
-//    glEnable( GL_LIGHT1 );
+    glEnable( GL_LIGHT1 );
     
     glLightfv( GL_LIGHT2, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT2, GL_SPECULAR, specular );

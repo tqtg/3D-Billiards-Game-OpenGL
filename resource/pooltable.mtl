@@ -9,7 +9,7 @@ Ks 0.449020 0.449020 0.449020
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd felt.jpg
+map_Kd Cloth.jpg
 
 newmtl 03_-_Default
 Ns 96.078431
@@ -19,7 +19,7 @@ Ks 0.449020 0.449020 0.449020
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd MAHOGANY.JPG
+map_Kd Wood_Light.JPG
 
 newmtl 04_-_Default
 Ns 96.078431
@@ -29,7 +29,7 @@ Ks 0.449020 0.449020 0.449020
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd MAHOGANY.JPG
+map_Kd Wood_Light.JPG
 
 newmtl 05_-_Default
 Ns 96.078431
@@ -39,7 +39,7 @@ Ks 0.449020 0.449020 0.449020
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd MAHOGANY.JPG
+map_Kd Wood_Mid_dark.JPG
 
 newmtl 09_-_Default
 Ns 96.078431
