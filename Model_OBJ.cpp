@@ -311,7 +311,7 @@ void Model_OBJ::draw()
 	glEnableClientState(GL_VERTEX_ARRAY);
  	glEnableClientState(GL_NORMAL_ARRAY);						
  	glEnableClientState (GL_TEXTURE_COORD_ARRAY);			
-	
+ 	
 	for (int i = 0; i < total_objects; i++)
 	{
 		material* mtl = objects[i].material;

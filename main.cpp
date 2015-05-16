@@ -178,6 +178,7 @@ int main(int argc, char **argv)
 	table = Model_OBJ("resource/pooltable.obj", 1, &textures);
 	balls = Model_OBJ("resource/threeBall.obj", 0, &textures);
 
+	
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
 }
