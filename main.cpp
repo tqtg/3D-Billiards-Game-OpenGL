@@ -126,7 +126,7 @@ void mouseMotion(int x, int y){
 	if (isRightClick){
 		int DY = y - oldMouseY;
 		if (DY>0) move(1, 0, 0);
-		if (DY<0) move(-1, 0, 0);
+		if (DY<0 && distanceFromObject > 2) move(-1, 0, 0);
 		oldMouseY = y;
 	}	
 }
@@ -230,7 +230,7 @@ void display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 //	gluLookAt( -1.1,1.1,0, 0.3,0,0, 0,1,0);
-	gluLookAt( position.x,position.y,position.z, 0.3,0,0, 0,1,0);
+	gluLookAt( position.x,position.y,position.z, -0.3,0.2774,0, 0,1,0);
 	
 	//	Draw objects
 	table.draw();
@@ -360,8 +360,8 @@ void createMenu(void){
 int main(int argc, char **argv) 
 {
 	// set window values
-	win.width = 900;
-	win.height = 600;
+	win.width = 1200;
+	win.height = 700;
 	win.title = "3D Billiards";
 	win.field_of_view_angle = 30;
 	win.z_near = 1.0f;
