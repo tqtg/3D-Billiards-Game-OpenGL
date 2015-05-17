@@ -7,8 +7,8 @@
 #include <GL/glut.h>
 #include "lib/SOIL.h"
 
-#define MAX_MTL 10
-#define MAX_OBJ 50
+#define MAX_MTL 20
+#define MAX_OBJ 100
 
 using namespace std;
 

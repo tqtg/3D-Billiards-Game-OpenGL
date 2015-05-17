@@ -16,6 +16,130 @@ using namespace std;
 #define KEY_ESCAPE 27
 
 
+////////////////////FOR CAMERA////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+
+class Vector3f {
+	public:
+		float x, y, z;
+		Vector3f(float x, float y, float z){
+			this->x = x;
+			this->y = y;
+			this->z = z;
+		}
+		void Set(float x, float y, float z){
+			this->x = x;
+			this->y = y;
+			this->z = z;
+		}
+};
+
+class ball {
+	public:
+		float x,y,z;
+		ball(float x, float y, float z){
+			this->x = x;
+			this->y = y;
+			this->z = z;
+		}
+};
+
+ball testball(0.000,0.000, 0.000);
+
+float PI = 3.14;
+Vector3f position(0, 0, 2);
+float distanceFromObject = 5;
+float angleAroundObject = 0;
+float pitch = 20;
+float yaw = 0;
+float roll;
+int oldMouseX, oldMouseY;
+bool mouseDown, isLeftClick, isRightClick;
+
+float calculateHorizontalDistance(){
+	return distanceFromObject*cos(pitch*PI/180);
+}
+float calculateVerticalDistance(){
+	return distanceFromObject*sin(pitch*PI/180);
+}
+
+void calculateCameraPosition(ball Ball, float horizDistance, float verticDistance){
+	float theta = 0 + angleAroundObject;
+	float offsetX = horizDistance * sin(theta*PI/180);
+	float offsetZ = horizDistance * cos(theta*PI/180);
+	position.x = Ball.x - offsetX;
+	position.z = Ball.y - offsetZ;
+	position.y = Ball.y - verticDistance;
+}
+
+void calculateZoom(float command){
+	//Command is 1 or -1 which equivalent to zoom in and zoom out
+	distanceFromObject += command * 0.1f;
+}
+
+void calculatePitch(float MouseDY){
+	//ensure that right button is down
+	float pitchChange = MouseDY * 0.1f;
+	pitch -= pitchChange;	
+}
+
+void calculateAngleAroundObject(float MouseDX){
+	//ensure that left button is down
+//	cout << MouseDX<<endl;
+	float angleChange = MouseDX * 0.1f;
+	angleAroundObject -= angleChange;
+}
+
+void move(float command, float MouseDY, float MouseDX){
+	calculateZoom(command);
+	calculatePitch(MouseDY);
+	calculateAngleAroundObject(MouseDX);
+	float horizontalDistance = calculateHorizontalDistance();
+	float verticalDistance = calculateVerticalDistance();
+	calculateCameraPosition(testball, horizontalDistance, verticalDistance);
+	yaw = 180 - angleAroundObject;
+}
+
+
+/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
+void MouseEvent(int button, int state, int x, int y){
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+		isLeftClick = true;
+	}else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN){
+		isRightClick = true;
+	}else{
+		isLeftClick = false;
+		isRightClick = false;
+	}
+	oldMouseX = x;
+	oldMouseY = y;
+}
+ 
+void mouseMotion(int x, int y){
+	if (isLeftClick){
+		int DY = y - oldMouseY;
+		int DX = x - oldMouseX;
+		move(0, (float)DY, (float)DX);
+		oldMouseY = y;
+		oldMouseX = x;
+	}
+	if (isRightClick){
+		int DY = y - oldMouseY;
+		if (DY>0) move(1, 0, 0);
+		if (DY<0) move(-1, 0, 0);
+		oldMouseY = y;
+	}	
+}
+
+void keyboardCam(){
+	
+}
+/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
+
+////////////////////FOR CAMERA////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+
+
 /************************************************************************
   Window
  ************************************************************************/
@@ -38,32 +162,23 @@ typedef struct {
  
 Model_OBJ table;
 Model_OBJ balls;
+Model_OBJ chairs;
+Model_OBJ room;
 glutWindow win;
 map<string, texture> textures;
- 
-void drawFloor()
-{
-	glColor3f(1.0, 1.0, 1.0);
-	glBegin(GL_LINES);
-	for (GLfloat i = -2.5; i <= 2.5; i += 0.25) {
-	    glVertex3f(i, 0, 2.5); glVertex3f(i, 0, -2.5);
-		glVertex3f(2.5, 0, i); glVertex3f(-2.5, 0, i);
-	}
-	glEnd();
-}
  
 void display() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt( -1.1,1.1,0, 0.3,0,0, 0,1,0);
-
-	//	Draw floor
-	drawFloor();
+//	gluLookAt( -1.1,1.1,0, 0.3,0,0, 0,1,0);
+	gluLookAt( position.x,position.y,position.z, 0.3,0,0, 0,1,0);
 
 	//	Draw objects
 	table.draw();
 	balls.draw();
+	chairs.draw();
+	room.draw();
 
 	glutSwapBuffers();
 }
@@ -148,8 +263,16 @@ int main(int argc, char **argv)
 	initialize();
 
 	table = Model_OBJ("resource/pooltable.obj", 1, &textures);
-	balls = Model_OBJ("resource/threeBall.obj", 0, &textures);
+	balls = Model_OBJ("resource/threeball.obj", 0, &textures);
+	chairs = Model_OBJ("resource/chairs.obj", 0, &textures);
+	room = Model_OBJ("resource/NewBallTest.obj", 0, &textures);
 
+
+	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
+  	glutMouseFunc(MouseEvent);
+  	glutMotionFunc(mouseMotion);
+  	glutKeyboardFunc( keyboardCam );		
+  	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
 	
 	glutMainLoop();												// run GLUT mainloop
 	return 0;

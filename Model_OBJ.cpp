@@ -24,10 +24,13 @@ Model_OBJ::Model_OBJ(char* objFile, bool hasTexture, map<string, texture>* textu
 	this->total_vertices_floats = 0;
 	this->total_textures_coords_floats = 0;
 	this->total_normal_vectors_floats = 0;
-	this->hasTexture = hasTexture;
 	this->total_objects = 0;
 	this->total_materials = 0;
-	this->textures = textures;
+	this->hasTexture = hasTexture;
+	if (hasTexture)
+	{
+		this->textures = textures;
+	}
 	
 	this->loadOBJ(objFile, hasTexture);
 }
@@ -170,7 +173,7 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 				
 				const char* cstr = mtlFile.c_str();
 				total_materials = loadMTL(cstr);
-				cout << "Number of mtl: " << loadMTL(cstr) << endl;
+				cout << "Number of mtl: " << total_materials << endl;
 			}
 			
 			// Create new object
@@ -209,7 +212,7 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 					&vertexBuffer[total_vertices_floats + 1], 
 					&vertexBuffer[total_vertices_floats + 2]);
 
-				total_vertices_floats += FLOATS_PER_VERTEX;		
+				total_vertices_floats += FLOATS_PER_VERTEX;	
 			}
 			
 			//	Read texture coordinates
@@ -268,9 +271,9 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 					&vertexNumber[2], &vnNumber[2]);		
 				}
 				
-				vertexNumber[0] -= 1;										// OBJ file starts counting from 1
-				vertexNumber[1] -= 1;										// OBJ file starts counting from 1
-				vertexNumber[2] -= 1;										// OBJ file starts counting from 1
+				vertexNumber[0] -= 1;									// OBJ file starts counting from 1
+				vertexNumber[1] -= 1;									// OBJ file starts counting from 1
+				vertexNumber[2] -= 1;									// OBJ file starts counting from 1
 				
 				vnNumber[0] -= 1;										// OBJ file starts counting from 1
 				vnNumber[1] -= 1;										// OBJ file starts counting from 1
