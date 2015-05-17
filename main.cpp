@@ -157,6 +157,10 @@ typedef struct {
 /***************************************************************************
  * Program code
  ***************************************************************************/
+
+
+ 
+ 
  
 Model_OBJ table;
 Model_OBJ ball_0;
@@ -168,17 +172,72 @@ Model_OBJ room;
 glutWindow win;
 map<string, texture> textures;
  
+ 
+float BacHoVertices[] = {0.347823, 0.005155, 0.730080,
+1.681823,0.005155,0.730080,
+1.681823,0.005155,-0.269920,
+0.347823,0.005156,-0.269920};
+
+float BacHoTexts[] = {0.000000, 0.000000,
+1.000000, 0.000000,
+1.000000, 1.000000,
+0.000000, 1.000000};
+					
+void loadDoorAndImage()
+{
+	texture tex;
+	string textureName = "B.jpg";
+	string texturePath = "resource/" + textureName;
+	tex.image = SOIL_load_image(texturePath.c_str(), &(tex.width), &(tex.height), NULL, 0);
+	textures.insert(textures.find(textureName), pair<string, texture>(textureName, tex));
+	
+	cout << tex.width << endl;
+}
+
+void drawDoorAndImage()
+{
+//	cout << (textures.find("Felt.jpg")->second).width << endl;
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+//	glEnableClientState(GL_NORMAL_ARRAY);
+				
+ 	glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+			
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures.find("B.jpg")->second).width, (textures.find("B.jpg")->second).height,
+						 0, GL_RGB, GL_UNSIGNED_BYTE, (textures.find("B.jpg")->second).image);
+			
+		 	glEnable(GL_TEXTURE_2D);
+		 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		 	
+	glVertexPointer(3, GL_FLOAT, 0, BacHoVertices);
+	glTexCoordPointer(2, GL_FLOAT, 0, BacHoTexts);
+	glDrawArrays(GL_QUADS, 0, 12);
+	
+	
+	glDisableClientState(GL_VERTEX_ARRAY);
+//	glDisableClientState(GL_NORMAL_ARRAY);
+	
+	glDisableClientState (GL_TEXTURE_COORD_ARRAY);	
+}
+ 
 void display() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 //	gluLookAt( -1.1,1.1,0, 0.3,0,0, 0,1,0);
 	gluLookAt( position.x,position.y,position.z, 0.3,0,0, 0,1,0);
-
+	
 	//	Draw objects
 	table.draw();
 	chairs.draw();
 	room.draw();
+	
+//	drawDoorAndImage();
 	
 	glTranslated(-0.3, 0.2774, 0);
 	ball_0.draw();
@@ -229,9 +288,15 @@ void initialize ()
     
     glLightfv( GL_LIGHT2, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT2, GL_SPECULAR, specular );
-    GLfloat light2_pos[] = {-1, 2, -1, 1};
+    GLfloat light2_pos[] = {0.5, 0.5, 0.5, 1};
 	glLightfv(GL_LIGHT2, GL_POSITION, light2_pos) ;
     glEnable( GL_LIGHT2 );
+    
+    glLightfv( GL_LIGHT3, GL_DIFFUSE, diffuse );
+    glLightfv( GL_LIGHT3, GL_SPECULAR, specular );
+    GLfloat light3_pos[] = {-1.5, 1, 1, 1};
+	glLightfv(GL_LIGHT3, GL_POSITION, light3_pos) ;
+    glEnable( GL_LIGHT3 );
     
     glShadeModel( GL_SMOOTH );
     glDepthFunc( GL_LEQUAL );
@@ -291,6 +356,7 @@ void createMenu(void){
 
 /////////// GUI /////////////////
 
+
 int main(int argc, char **argv) 
 {
 	// set window values
@@ -318,6 +384,8 @@ int main(int argc, char **argv)
 	table = Model_OBJ("resource/pooltable.obj", 1, &textures);
 	chairs = Model_OBJ("resource/chairs.obj", 0, &textures);
 	room = Model_OBJ("resource/Room.obj", 1, &textures);
+	
+//	loadDoorAndImage();
 	
 	ball_0 = Model_OBJ("resource/Ball0.obj", 0, &textures);
 	ball_1 = Model_OBJ("resource/ball3.obj", 0, &textures);

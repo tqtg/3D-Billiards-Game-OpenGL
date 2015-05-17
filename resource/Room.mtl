@@ -1,5 +1,5 @@
 # Blender MTL File: 'Room.blend'
-# Material Count: 2
+# Material Count: 8
 
 newmtl Material.001
 Ns 96.078431
@@ -19,4 +19,60 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd MAHOGANY.JPG
+map_Kd D:\\Dropbox\\3D-Billiards-Game-OpenGL\\resource\\MAHOGANY.JPG
+
+newmtl Material.003
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd RoomFinal\\poolTuan\\door.jpg
+
+newmtl Material.004
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd 15.1.BacsyNhuthebao_a1.jpg
+
+newmtl mat_brass
+Ns 37.254902
+Ka 0.000000 0.000000 0.000000
+Kd 0.555280 0.539600 0.225920
+Ks 0.950000 0.950000 0.950000
+Ni 1.500000
+d 1.000000
+illum 2
+
+newmtl mat_chain
+Ns 7.843137
+Ka 0.000000 0.000000 0.000000
+Kd 0.131760 0.131760 0.131760
+Ks 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+
+newmtl mat_lamp
+Ns 47.058824
+Ka 0.000000 0.000000 0.000000
+Kd 0.050160 0.163120 0.037680
+Ks 0.450000 0.450000 0.450000
+Ni 1.500000
+d 1.000000
+illum 2
+
+newmtl mat_light
+Ns 7.843137
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
