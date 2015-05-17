@@ -1,4 +1,4 @@
-#include <windows.h>
+ #include <windows.h>
 #include <GL/glut.h>
 #include <iostream>
 #include <fstream>
@@ -132,7 +132,9 @@ void mouseMotion(int x, int y){
 	}	
 }
 
-
+void keyboardCam(){
+	
+}
 /////////////////FOR CAMERA/////////////////////////////////////////////////////////////
 
 ////////////////////FOR CAMERA////////////////////////////////////////////////////
@@ -158,11 +160,13 @@ typedef struct {
 /***************************************************************************
  * Program code
  ***************************************************************************/
+ 
 const int numOfBall = 3;
 Table table;
 Ball* balls[numOfBall];
 Model_OBJ chairs;
 Model_OBJ room;
+
 glutWindow win;
 map<string, texture> textures;
  
@@ -190,10 +194,12 @@ void drawFloor()
 	glEnd();
 }
  
+
 void display() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
+//	gluLookAt( -1.1,1.1,0, 0.3,0,0, 0,1,0);
 	gluLookAt( position.x,position.y,position.z, 0.3,0,0, 0,1,0);
 
 	//	Draw objects
@@ -205,10 +211,12 @@ void display()
 		}
 		table.resToBallHitTable(balls[i]);
 	}
+	
+
 	for (int i=0; i< numOfBall; ++i) balls[i]->draw();		
-	table.draw();
+	table.draw();		
 	chairs.draw();
-	room.draw();	
+	room.draw();
 	float dt= 0.1;
 	for (int i=0; i< numOfBall; ++i){
 		balls[i]->pos = balls[i]->pos +  balls[i]->vel*dt;				
@@ -216,7 +224,7 @@ void display()
 		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);		
 		balls[i]->angle += rotateAngle;
 	}	
-	Sleep(10);	
+	Sleep(10);
 	glutSwapBuffers();
 }
 
@@ -251,7 +259,7 @@ void initialize ()
     
     glLightfv( GL_LIGHT1, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT1, GL_SPECULAR, specular );
-    GLfloat light1_pos[] = {0, 2, 0, 1};
+    GLfloat light1_pos[] = {0, 5, 0, 1};
 	glLightfv(GL_LIGHT1, GL_POSITION, light1_pos) ;
     glEnable( GL_LIGHT1 );
     
@@ -279,46 +287,6 @@ void keyboard ( unsigned char key, int x, int y )
   }
 }
 
-void reshape (int width, int height) {  
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-	glMatrixMode(GL_PROJECTION); 
-	glLoadIdentity();
-	GLfloat aspect = (GLfloat) win.width / win.height;
-	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
-	glMatrixMode(GL_MODELVIEW);
-}  
-
-/////////// GUI /////////////////
-
-static int window;
-static int menu_id;
-static int submenu_id;
-static int value = 0; 
-void menu(int num){
-  if(num == 0){
-    glutDestroyWindow(window);
-    exit(0);
-  }else{
-    value = num;
-  }
-  glutPostRedisplay();
-} 
-
-void createMenu(void){     
-	submenu_id = glutCreateMenu(menu);
-    glutAddMenuEntry("Sphere", 2);
-    glutAddMenuEntry("Cone", 3);
-    glutAddMenuEntry("Torus", 4);
-    glutAddMenuEntry("Teapot", 5);     
-	menu_id = glutCreateMenu(menu);
-    glutAddMenuEntry("Clear", 1);
-    glutAddSubMenu("Draw", submenu_id);
-    glutAddMenuEntry("Quit", 0);     
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
-} 
-
-/////////// GUI /////////////////
-
 int main(int argc, char **argv) 
 {
 	// set window values
@@ -330,26 +298,23 @@ int main(int argc, char **argv)
 	win.z_far = 500.0f;
 	
 	// initialize and run program
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );
-	glutInitWindowSize(win.width,win.height);
-	glutCreateWindow(win.title);
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape); 
-	glutIdleFunc( display );
-    glutKeyboardFunc( keyboard );
+	glutInit(&argc, argv);                                      // GLUT initialization
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );  // Display Mode
+	glutInitWindowSize(win.width,win.height);					// set window size
+	glutCreateWindow(win.title);								// create Window
+	glutDisplayFunc(display);									// register Display Function
+	glutIdleFunc( display );									// register Idle Function
+    glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
-
 
 	table = Table("resource/pooltable.obj", 1, &textures);	
 	chairs = Model_OBJ("resource/chairs.obj", 0, &textures);
-	room = Model_OBJ("resource/Room.obj", 1, &textures);
-	
-	balls[0] = new Ball("resource/Ball0.obj", 0, &textures);	
+	room = Model_OBJ("resource/NewBallTest.obj", 0, &textures);
+	balls[0] = new Ball("resource/Ball10.obj", 0, &textures);	
 	balls[0]->pos = glm::vec3(-0.1, 0.2774, 0.1);
 	balls[0]->vel = glm::vec3(-0.05, 0, -0.05);
 	balls[0]->acc = glm::vec3(-0.01, 0, -0.01);	
-	balls[1] = new Ball("resource/Ball3.obj", 0, &textures);		
+	balls[1] = new Ball("resource/Ball10.obj", 0, &textures);		
 	balls[1]->pos = glm::vec3(0.22, 0.2774, 0.1);
 	balls[1]->vel = glm::vec3(-0.05, 0, -0.05);
 	balls[1]->acc = glm::vec3(-0.01, 0, -0.01);			
@@ -359,15 +324,17 @@ int main(int argc, char **argv)
 	balls[2]->acc = glm::vec3(-0.01, 0, -0.01);		
 	balls[0]->col[0] = 1.0f;
 	balls[1]->col[1] = 1.0f;
-	balls[2]->col[2] = 1.0f;		
-    
+	balls[2]->col[2] = 1.0f;
 
-		
 
 
 	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
   	glutMouseFunc(MouseEvent);
-  	glutMotionFunc(mouseMotion);  	  
+  	glutMotionFunc(mouseMotion);
+  	glutKeyboardFunc( keyboardCam );		
+  	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
+
+	
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
 }

@@ -1,14 +1,14 @@
 [Editors]
 <<<<<<< HEAD
 Focused=0
-Order=0,5,4,6,3,1
+Order=5,4,6,3,1,0
 [Editor_0]
 Open=1
 Top=1
 <<<<<<< HEAD
-CursorCol=22
-CursorRow=119
-TopLine=76
+CursorCol=2
+CursorRow=147
+TopLine=283
 =======
 CursorCol=17
 CursorRow=164
@@ -30,6 +30,7 @@ TopLine=316
 =======
 Focused=1
 Order=1,2,0
+LeftChar=1
 [Editor_0]
 Open=1
 Top=0
@@ -67,9 +68,9 @@ LeftChar=1
 [Editor_3]
 Open=1
 Top=0
-CursorCol=19
-CursorRow=47
-TopLine=35
+CursorCol=18
+CursorRow=49
+TopLine=33
 LeftChar=1
 [Editor_4]
 CursorCol=7
@@ -82,7 +83,7 @@ CursorRow=4
 TopLine=1
 LeftChar=1
 [Editor_6]
-CursorCol=1
-CursorRow=40
-TopLine=40
+CursorCol=23
+CursorRow=8
+TopLine=1
 LeftChar=1
