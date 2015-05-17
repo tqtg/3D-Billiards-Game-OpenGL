@@ -161,7 +161,10 @@ typedef struct {
  ***************************************************************************/
  
 Model_OBJ table;
-Model_OBJ balls;
+Model_OBJ ball_0;
+Model_OBJ ball_1;
+Model_OBJ ball_2;
+Model_OBJ ball_3;
 Model_OBJ chairs;
 Model_OBJ room;
 glutWindow win;
@@ -176,9 +179,17 @@ void display()
 
 	//	Draw objects
 	table.draw();
-	balls.draw();
 	chairs.draw();
-	room.draw();
+	
+	glTranslated(-0.3, 0.2774, 0);
+	ball_0.draw();
+	glTranslated(0.5, 0, 0);
+	ball_1.draw();
+	glTranslated(0.1, 0, 0.1);
+	ball_2.draw();
+	glTranslated(0, 0, -0.2);
+	ball_3.draw();
+//	room.draw();
 
 	glutSwapBuffers();
 }
@@ -263,9 +274,13 @@ int main(int argc, char **argv)
 	initialize();
 
 	table = Model_OBJ("resource/pooltable.obj", 1, &textures);
-	balls = Model_OBJ("resource/threeball.obj", 0, &textures);
 	chairs = Model_OBJ("resource/chairs.obj", 0, &textures);
-	room = Model_OBJ("resource/NewBallTest.obj", 0, &textures);
+	
+	ball_0 = Model_OBJ("resource/Ball0.obj", 0, &textures);
+	ball_1 = Model_OBJ("resource/ball3.obj", 0, &textures);
+	ball_2 = Model_OBJ("resource/ball10.obj", 0, &textures);
+	ball_3 = Model_OBJ("resource/ball13.obj", 0, &textures);
+//	room = Model_OBJ("resource/NewBallTest.obj", 0, &textures);
 
 
 	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
