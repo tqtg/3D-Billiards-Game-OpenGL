@@ -1,4 +1,4 @@
- #include <windows.h>
+#include <windows.h>
 #include <GL/glut.h>
 #include <iostream>
 #include <fstream>
@@ -48,7 +48,7 @@ class ball {
 ball testball(0.000,0.000, 0.000);
 
 float PI = 3.14;
-Vector3f position(0, 0, 2);
+Vector3f position(1,2.1,0);
 float distanceFromObject = 5;
 float angleAroundObject = 0;
 float pitch = 20;
@@ -192,6 +192,13 @@ void drawFloor()
 		glVertex3f(table.right,table.heigh, table.top);								
 		glVertex3f(table.left,table.heigh, table.top);
 	glEnd();
+	for (int i=0; i< 6; i++){
+		glPushMatrix();
+		glm::vec3 pos = table.holes[i]->pos;
+		glTranslatef(pos.x, pos.y, pos.z);
+		glutWireSphere(0.04,10,10);
+		glPopMatrix();
+	}
 }
  
 
@@ -199,32 +206,48 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-//	gluLookAt( -1.1,1.1,0, 0.3,0,0, 0,1,0);
-	gluLookAt( position.x,position.y,position.z, 0.3,0,0, 0,1,0);
+	gluLookAt( -1,2.0,0, 0.1,0,0, 0,1,0);
+	drawFloor();
+//	gluLookAt( position.x,position.y,position.z, -0.2,0,0, 0,1,0);
 
-	//	Draw objects
+	//  check in holes
+	
+	for (int i=0; i< numOfBall; ++i){
+		if (!balls[i]->isInHole)
+		for (int j=0; j< 6;  ++j){
+			Hole* hole = table.holes[j];
+			if (hole->isBallInHole(balls[i])){
+				hole->resToBallInHole(balls[i]);
+				break;
+			}								
+		}
+	}
+	//	check colisions
 	for (int i=0; i< numOfBall; ++i){
 		for (int j=i+1; j< numOfBall; ++j){
-			if (balls[i]->isBallHit(balls[j]) ){
+			if ( !balls[i]->isInHole  && !balls[j]->isInHole && balls[i]->isBallHit(balls[j]) ){
 				balls[i]->resToBallHit(balls[j]);
 			}
 		}
-		table.resToBallHitTable(balls[i]);
+		if ( !balls[i]->isInHole ) table.resToBallHitTable(balls[i]);
 	}
 	
 
 	for (int i=0; i< numOfBall; ++i) balls[i]->draw();		
-	table.draw();		
-	chairs.draw();
-	room.draw();
+//	table.draw();		
+//	chairs.draw();
+//	room.draw();
+
+	// update position and calculate rotate angle
 	float dt= 0.1;
 	for (int i=0; i< numOfBall; ++i){
-		balls[i]->pos = balls[i]->pos +  balls[i]->vel*dt;				
+		if (balls[i]->pos.y > 0.1)
+			balls[i]->pos = balls[i]->pos +  balls[i]->vel*dt;				
 		float stepLength = glm::length(balls[i]->vel*dt);
 		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);		
 		balls[i]->angle += rotateAngle;
 	}	
-	Sleep(10);
+//	Sleep(10);
 	glutSwapBuffers();
 }
 
@@ -321,10 +344,7 @@ int main(int argc, char **argv)
 	balls[2] = new Ball("resource/Ball10.obj", 0, &textures);		
 	balls[2]->pos = glm::vec3(0.4, 0.2774, -0.15);
 	balls[2]->vel = glm::vec3(-0.05, 0, -0.05);
-	balls[2]->acc = glm::vec3(-0.01, 0, -0.01);		
-	balls[0]->col[0] = 1.0f;
-	balls[1]->col[1] = 1.0f;
-	balls[2]->col[2] = 1.0f;
+	balls[2]->acc = glm::vec3(-0.01, 0, -0.01);			
 
 
 

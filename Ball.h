@@ -6,15 +6,14 @@ class Ball: public Model_OBJ{
 		Ball(){}
 		Ball(char* objFile, bool hasTexture, map<string, texture>* textures);
 		bool isBallHit(Ball *ball);		
-		void resToBallHit(Ball *ball);												
+		void resToBallHit(Ball *ball);
 		void draw();
-	public:				
+	public:						
 		float radius;
 		float mass;
 		glm::vec3 pos;
 		glm::vec3 vel;
 		glm::vec3 acc;				
-		float angle = 0;		
-		float col[4];
-	
+		float angle = 0;			
+		bool isInHole = false;				
 };

@@ -1,4 +1,4 @@
-#include "Ball.h"
+#include "Hole.h"
 class Table: public Model_OBJ{
 	public:
 		Table(){}
@@ -11,4 +11,5 @@ class Table: public Model_OBJ{
 	public:
 		float left, right, top , bottom;
 		float heigh;
+		Hole* holes[6];
 };
