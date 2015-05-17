@@ -47,7 +47,7 @@ class ball {
 ball testball(0.000,0.000, 0.000);
 
 float PI = 3.14;
-Vector3f position(0, 0, 2);
+Vector3f position(0, 5, 0);
 float distanceFromObject = 5;
 float angleAroundObject = 0;
 float pitch = 20;
@@ -173,55 +173,64 @@ glutWindow win;
 map<string, texture> textures;
  
  
-float BacHoVertices[] = {0.347823, 0.005155, 0.730080,
-1.681823,0.005155,0.730080,
-1.681823,0.005155,-0.269920,
-0.347823,0.005156,-0.269920};
 
-float BacHoTexts[] = {0.000000, 0.000000,
+float ImageVertices[] = {
+-0.125526, 1.407483, -1.984869,
+1.309474, 1.407483, -1.984869,
+1.309474, 0.407483, -1.984869,
+-0.125526, 0.407483, -1.984869
+};
+
+float Text_Coords[] = {
+0.000000, 0.000000,
 1.000000, 0.000000,
 1.000000, 1.000000,
-0.000000, 1.000000};
+0.000000, 1.000000
+};
+
+float DoorVerticies[] = {
+-1.633465, 0.004256, -1.986908,
+-1.133465, 0.004256, -1.986908,
+-1.133465, 1.184256, -1.986908,
+-1.633465, 1.184256, -1.986908
+};
 					
 void loadDoorAndImage()
 {
 	texture tex;
-	string textureName = "B.jpg";
+	string textureName = "BacHo.jpg";
 	string texturePath = "resource/" + textureName;
 	tex.image = SOIL_load_image(texturePath.c_str(), &(tex.width), &(tex.height), NULL, 0);
 	textures.insert(textures.find(textureName), pair<string, texture>(textureName, tex));
 	
-	cout << tex.width << endl;
+//	texture door;
+//	textureName = "door.jpg";
+//	texturePath = "resource/" + textureName;
+//	door.image = SOIL_load_image(texturePath.c_str(), &(door.width), &(door.height), NULL, 0);
+//	textures.insert(textures.find(textureName), pair<string, texture>(textureName, door));
 }
 
 void drawDoorAndImage()
 {
-//	cout << (textures.find("Felt.jpg")->second).width << endl;
-	
 	glEnableClientState(GL_VERTEX_ARRAY);
-//	glEnableClientState(GL_NORMAL_ARRAY);
-				
  	glEnableClientState (GL_TEXTURE_COORD_ARRAY);
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-			
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures.find("B.jpg")->second).width, (textures.find("B.jpg")->second).height,
-						 0, GL_RGB, GL_UNSIGNED_BYTE, (textures.find("B.jpg")->second).image);
-			
-		 	glEnable(GL_TEXTURE_2D);
-		 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);		
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glEnable(GL_TEXTURE_2D);
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures.find("BacHo.jpg")->second).width, (textures.find("BacHo.jpg")->second).height,
+				0, GL_RGB, GL_UNSIGNED_BYTE, (textures.find("BacHo.jpg")->second).image);
 		 	
-	glVertexPointer(3, GL_FLOAT, 0, BacHoVertices);
-	glTexCoordPointer(2, GL_FLOAT, 0, BacHoTexts);
-	glDrawArrays(GL_QUADS, 0, 12);
+	glVertexPointer(3, GL_FLOAT, 0, ImageVertices);
+	glTexCoordPointer(2, GL_FLOAT, 0, Text_Coords);
+	glDrawArrays(GL_QUADS, 0, 11);
 	
 	
 	glDisableClientState(GL_VERTEX_ARRAY);
-//	glDisableClientState(GL_NORMAL_ARRAY);
-	
 	glDisableClientState (GL_TEXTURE_COORD_ARRAY);	
 }
  
@@ -237,7 +246,7 @@ void display()
 	chairs.draw();
 	room.draw();
 	
-//	drawDoorAndImage();
+	drawDoorAndImage();
 	
 	glTranslated(-0.3, 0.2774, 0);
 	ball_0.draw();
@@ -272,12 +281,20 @@ void initialize ()
     GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
     
+    
     glLightModelfv( GL_LIGHT_MODEL_AMBIENT, amb_light );
     
     glLightfv( GL_LIGHT0, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT0, GL_SPECULAR, specular );
-    GLfloat light0_pos[] = {1, 2, 1, 1};
+    GLfloat light0_pos[] = {0, 2, 0, 1};
+    GLfloat spot_direction[] = { -1.0, 2.0, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, light0_pos) ;
+	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.5);
+	glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.5);
+	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.2);
+	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45.0);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
+	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 2.0);
     glEnable( GL_LIGHT0 );
     
     glLightfv( GL_LIGHT1, GL_DIFFUSE, diffuse );
@@ -385,7 +402,7 @@ int main(int argc, char **argv)
 	chairs = Model_OBJ("resource/chairs.obj", 0, &textures);
 	room = Model_OBJ("resource/Room.obj", 1, &textures);
 	
-//	loadDoorAndImage();
+	loadDoorAndImage();
 	
 	ball_0 = Model_OBJ("resource/Ball0.obj", 0, &textures);
 	ball_1 = Model_OBJ("resource/ball3.obj", 0, &textures);
