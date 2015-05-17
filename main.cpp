@@ -9,7 +9,8 @@
 #include <map>
 #include <list>
 #include "lib/SOIL.h"
-#include "Model_OBJ.h"
+#include "Table.h"
+#include "math.h"
 
 using namespace std;
 
@@ -38,8 +39,14 @@ typedef struct {
  * Program code
  ***************************************************************************/
  
-Model_OBJ table;
-Model_OBJ balls;
+//Model_OBJ table;
+//Model_OBJ balls;
+
+const int numOfBall = 3;
+Table table;
+Ball* balls[numOfBall];
+
+
 glutWindow win;
 map<string, texture> textures;
  
@@ -51,6 +58,19 @@ void drawFloor()
 	    glVertex3f(i, 0, 2.5); glVertex3f(i, 0, -2.5);
 		glVertex3f(2.5, 0, i); glVertex3f(-2.5, 0, i);
 	}
+	glEnd();
+	glBegin(GL_LINES);
+		glVertex3f(table.left,table.heigh, table.top);
+		glVertex3f(table.left,table.heigh, table.bottom);		
+		
+		glVertex3f(table.left,table.heigh, table.bottom);				
+		glVertex3f(table.right,table.heigh, table.bottom);						
+		
+		glVertex3f(table.right,table.heigh, table.bottom);						
+		glVertex3f(table.right,table.heigh, table.top);								
+		
+		glVertex3f(table.right,table.heigh, table.top);								
+		glVertex3f(table.left,table.heigh, table.top);
 	glEnd();
 }
  
@@ -64,9 +84,25 @@ void display()
 	drawFloor();
 
 	//	Draw objects
-	table.draw();
-	balls.draw();
+	for (int i=0; i< numOfBall; ++i){
+		for (int j=i+1; j< numOfBall; ++j){
+			if (balls[i]->isBallHit(balls[j]) ){
+				balls[i]->resToBallHit(balls[j]);
+			}
+		}
+		table.resToBallHitTable(balls[i]);
+	}
 
+	for (int i=0; i< numOfBall; ++i) balls[i]->draw();		
+	table.draw();		
+	float dt= 0.1;
+	for (int i=0; i< numOfBall; ++i){
+		balls[i]->pos = balls[i]->pos +  balls[i]->vel*dt;				
+		float stepLength = glm::length(balls[i]->vel*dt);
+		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);		
+		balls[i]->angle += rotateAngle;
+	}	
+	Sleep(10);
 	glutSwapBuffers();
 }
 
@@ -149,9 +185,22 @@ int main(int argc, char **argv)
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
 	initialize();
 
-	table = Model_OBJ("resource/pooltable.obj", 1, &textures);
-	balls = Model_OBJ("resource/threeBall.obj", 0, &textures);
-
+	table = Table("resource/pooltable_final.obj", 1, &textures);	
+	balls[0] = new Ball("resource/Ball10.obj", 0, &textures);	
+	balls[0]->pos = glm::vec3(-0.1, 0.2774, 0.1);
+	balls[0]->vel = glm::vec3(-0.05, 0, -0.05);
+	balls[0]->acc = glm::vec3(-0.01, 0, -0.01);	
+	balls[1] = new Ball("resource/Ball10.obj", 0, &textures);		
+	balls[1]->pos = glm::vec3(0.22, 0.2774, 0.1);
+	balls[1]->vel = glm::vec3(-0.05, 0, -0.05);
+	balls[1]->acc = glm::vec3(-0.01, 0, -0.01);			
+	balls[2] = new Ball("resource/Ball10.obj", 0, &textures);		
+	balls[2]->pos = glm::vec3(0.4, 0.2774, -0.15);
+	balls[2]->vel = glm::vec3(-0.05, 0, -0.05);
+	balls[2]->acc = glm::vec3(-0.01, 0, -0.01);		
+	balls[0]->col[0] = 1.0f;
+	balls[1]->col[1] = 1.0f;
+	balls[2]->col[2] = 1.0f;
 	
 	glutMainLoop();												// run GLUT mainloop
 	return 0;

@@ -1,17 +1,17 @@
 # Project: 3D-Billiards
-# Makefile created by Dev-C++ 5.7.1
+# Makefile created by Dev-C++ 5.8.3
 
-CPP      = g++.exe
-CC       = gcc.exe
+CPP      = g++.exe -D__DEBUG__
+CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = main.o Model_OBJ.o
-LINKOBJ  = main.o Model_OBJ.o
-LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc -L"C:/Users/Tuan/Desktop/3D-Billiards-Game-OpenGL/lib" -lglut32 -lglu32 -lSOIL -lopengl32 -lwinmm -lgdi32
-INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include" -I"C:/Users/Tuan/Desktop/3D-Billiards-Game-OpenGL/lib"
-CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.8.1/include/c++" -I"C:/Users/Tuan/Desktop/3D-Billiards-Game-OpenGL/lib"
+OBJ      = main.o Model_OBJ.o Ball.o Table.o
+LINKOBJ  = main.o Model_OBJ.o Ball.o Table.o
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib32" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib32" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -L"C:/Users/Tuan/Desktop/3D-Billiards-Game-OpenGL/lib" -mwindows -lglut32 -lglu32 -lSOIL -lopengl32 -lwinmm -lgdi32 -m32 -g3
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.8.1/include/c++"
 BIN      = 3D-Billiards.exe
-CXXFLAGS = $(CXXINCS) -fpermissive
-CFLAGS   = $(INCS) 
+CXXFLAGS = $(CXXINCS) -m32 -g3 -fpermissive
+CFLAGS   = $(INCS) -m32 -g3
 RM       = rm.exe -f
 
 .PHONY: all all-before all-after clean clean-custom
@@ -29,3 +29,9 @@ main.o: main.cpp
 
 Model_OBJ.o: Model_OBJ.cpp
 	$(CPP) -c Model_OBJ.cpp -o Model_OBJ.o $(CXXFLAGS)
+
+Ball.o: Ball.cpp
+	$(CPP) -c Ball.cpp -o Ball.o $(CXXFLAGS)
+
+Table.o: Table.cpp
+	$(CPP) -c Table.cpp -o Table.o $(CXXFLAGS)
