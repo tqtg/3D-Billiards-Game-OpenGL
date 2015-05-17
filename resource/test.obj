@@ -1,0 +1,12 @@
+# Blender v2.74 (sub 0) OBJ File: 'test.blend'
+# www.blender.org
+mtllib test.mtl
+o Plane
+v 4.103026 0.000000 -4.103026
+v -4.103026 0.000000 -4.103026
+v 4.103026 0.000000 4.103026
+v -4.103026 0.000000 4.103026
+vn 0.000000 1.000000 0.000000
+usemtl Material.001
+s off
+f 1//1 2//1 4//1 3//1

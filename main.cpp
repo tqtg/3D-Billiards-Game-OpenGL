@@ -131,9 +131,7 @@ void mouseMotion(int x, int y){
 	}	
 }
 
-void keyboardCam(){
-	
-}
+
 /////////////////FOR CAMERA/////////////////////////////////////////////////////////////
 
 ////////////////////FOR CAMERA////////////////////////////////////////////////////
@@ -180,6 +178,7 @@ void display()
 	//	Draw objects
 	table.draw();
 	chairs.draw();
+	room.draw();
 	
 	glTranslated(-0.3, 0.2774, 0);
 	ball_0.draw();
@@ -189,7 +188,6 @@ void display()
 	ball_2.draw();
 	glTranslated(0, 0, -0.2);
 	ball_3.draw();
-//	room.draw();
 
 	glutSwapBuffers();
 }
@@ -225,7 +223,7 @@ void initialize ()
     
     glLightfv( GL_LIGHT1, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT1, GL_SPECULAR, specular );
-    GLfloat light1_pos[] = {0, 5, 0, 1};
+    GLfloat light1_pos[] = {0, 2, 0, 1};
 	glLightfv(GL_LIGHT1, GL_POSITION, light1_pos) ;
     glEnable( GL_LIGHT1 );
     
@@ -253,6 +251,46 @@ void keyboard ( unsigned char key, int x, int y )
   }
 }
 
+void reshape (int width, int height) {  
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	glMatrixMode(GL_PROJECTION); 
+	glLoadIdentity();
+	GLfloat aspect = (GLfloat) win.width / win.height;
+	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
+	glMatrixMode(GL_MODELVIEW);
+}  
+
+/////////// GUI /////////////////
+
+static int window;
+static int menu_id;
+static int submenu_id;
+static int value = 0; 
+void menu(int num){
+  if(num == 0){
+    glutDestroyWindow(window);
+    exit(0);
+  }else{
+    value = num;
+  }
+  glutPostRedisplay();
+} 
+
+void createMenu(void){     
+	submenu_id = glutCreateMenu(menu);
+    glutAddMenuEntry("Sphere", 2);
+    glutAddMenuEntry("Cone", 3);
+    glutAddMenuEntry("Torus", 4);
+    glutAddMenuEntry("Teapot", 5);     
+	menu_id = glutCreateMenu(menu);
+    glutAddMenuEntry("Clear", 1);
+    glutAddSubMenu("Draw", submenu_id);
+    glutAddMenuEntry("Quit", 0);     
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+} 
+
+/////////// GUI /////////////////
+
 int main(int argc, char **argv) 
 {
 	// set window values
@@ -264,29 +302,33 @@ int main(int argc, char **argv)
 	win.z_far = 500.0f;
 	
 	// initialize and run program
-	glutInit(&argc, argv);                                      // GLUT initialization
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );  // Display Mode
-	glutInitWindowSize(win.width,win.height);					// set window size
-	glutCreateWindow(win.title);								// create Window
-	glutDisplayFunc(display);									// register Display Function
-	glutIdleFunc( display );									// register Idle Function
-    glutKeyboardFunc( keyboard );								// register Keyboard Handler
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );
+	glutInitWindowSize(win.width,win.height);
+	glutCreateWindow(win.title);
+	glutDisplayFunc(display);
+	glutReshapeFunc(reshape); 
+	glutIdleFunc( display );
+    glutKeyboardFunc( keyboard );
 	initialize();
+
+    
+//    createMenu();
 
 	table = Model_OBJ("resource/pooltable.obj", 1, &textures);
 	chairs = Model_OBJ("resource/chairs.obj", 0, &textures);
+	room = Model_OBJ("resource/Room.obj", 1, &textures);
 	
 	ball_0 = Model_OBJ("resource/Ball0.obj", 0, &textures);
 	ball_1 = Model_OBJ("resource/ball3.obj", 0, &textures);
 	ball_2 = Model_OBJ("resource/ball10.obj", 0, &textures);
 	ball_3 = Model_OBJ("resource/ball13.obj", 0, &textures);
-//	room = Model_OBJ("resource/NewBallTest.obj", 0, &textures);
 
 
 	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
   	glutMouseFunc(MouseEvent);
   	glutMotionFunc(mouseMotion);
-  	glutKeyboardFunc( keyboardCam );		
+//  	glutKeyboardFunc( keyboardCam );		
   	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
 	
 	glutMainLoop();												// run GLUT mainloop
