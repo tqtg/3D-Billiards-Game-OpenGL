@@ -10,7 +10,7 @@
 #include <list>
 #include "lib/SOIL.h"
 #include "Table.h"
-#include "math.h"
+
 
 using namespace std;
 
@@ -166,52 +166,14 @@ Table table;
 Ball* balls[numOfBall];
 Model_OBJ chairs;
 Model_OBJ room;
-
 glutWindow win;
 map<string, texture> textures;
- 
-void drawFloor()
-{
-	glColor3f(1.0, 1.0, 1.0);
-	glBegin(GL_LINES);
-	for (GLfloat i = -2.5; i <= 2.5; i += 0.25) {
-	    glVertex3f(i, 0, 2.5); glVertex3f(i, 0, -2.5);
-		glVertex3f(2.5, 0, i); glVertex3f(-2.5, 0, i);
-	}
-	glEnd();
-	glBegin(GL_LINES);
-		glVertex3f(table.left,table.heigh, table.top);
-		glVertex3f(table.left,table.heigh, table.bottom);		
-		
-		glVertex3f(table.left,table.heigh, table.bottom);				
-		glVertex3f(table.right,table.heigh, table.bottom);						
-		
-		glVertex3f(table.right,table.heigh, table.bottom);						
-		glVertex3f(table.right,table.heigh, table.top);								
-		
-		glVertex3f(table.right,table.heigh, table.top);								
-		glVertex3f(table.left,table.heigh, table.top);
-	glEnd();
-	for (int i=0; i< 6; i++){
-		glPushMatrix();
-		glm::vec3 pos = table.holes[i]->pos;
-		glTranslatef(pos.x, pos.y, pos.z);
-		glutWireSphere(0.04,10,10);
-		glPopMatrix();
-	}
-}
- 
 
-void display() 
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-	gluLookAt( -1,2.0,0, 0.1,0,0, 0,1,0);
-	drawFloor();
-//	gluLookAt( position.x,position.y,position.z, -0.2,0,0, 0,1,0);
+float force = 0;
+float fdir = -1;
+bool isHUDActive = false;
 
-	//  check in holes
-	
+void checkInHoles(){
 	for (int i=0; i< numOfBall; ++i){
 		if (!balls[i]->isInHole)
 		for (int j=0; j< 6;  ++j){
@@ -221,8 +183,10 @@ void display()
 				break;
 			}								
 		}
-	}
-	//	check colisions
+	}	
+}
+
+void checkColisions(){
 	for (int i=0; i< numOfBall; ++i){
 		for (int j=i+1; j< numOfBall; ++j){
 			if ( !balls[i]->isInHole  && !balls[j]->isInHole && balls[i]->isBallHit(balls[j]) ){
@@ -231,14 +195,9 @@ void display()
 		}
 		if ( !balls[i]->isInHole ) table.resToBallHitTable(balls[i]);
 	}
-	
+}
 
-	for (int i=0; i< numOfBall; ++i) balls[i]->draw();		
-//	table.draw();		
-//	chairs.draw();
-//	room.draw();
-
-	// update position and calculate rotate angle
+void updateBalls(){
 	float dt= 0.1;
 	for (int i=0; i< numOfBall; ++i){
 		if (balls[i]->pos.y > 0.1)
@@ -246,8 +205,58 @@ void display()
 		float stepLength = glm::length(balls[i]->vel*dt);
 		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);		
 		balls[i]->angle += rotateAngle;
-	}	
-//	Sleep(10);
+	}		
+}
+
+void draw3DScence(){
+	
+	checkInHoles();	
+	checkColisions();
+	
+	for (int i=0; i< numOfBall; ++i) balls[i]->draw();		
+	table.draw();		
+	chairs.draw();
+
+	updateBalls();
+}
+void draw2DHUD(){
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0,win.width, win.height, 0.0, -1.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);	
+	glLoadIdentity();
+	glDisable(GL_CULL_FACE);
+	glClear(GL_DEPTH_BUFFER_BIT);    							
+
+	float posx = win.width*0.05;
+	float posy = win.height*0.1;
+	float hudH= win.height*0.6;
+	float hudW = win.width*0.05;
+    
+	if ( force <= 0 || force >= 100) fdir*=-1;
+	force += 4*fdir;
+    hudH = hudH*force/100;	
+	glBegin(GL_POLYGON);  		  	
+		glVertex2f(posx, posy);
+		glVertex2f(posx+hudW, posy);				
+		glVertex2f(posx+hudW, posy+hudH);
+		glVertex2f(posx, posy+hudH);		
+	glEnd();						
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);		
+}
+void display() 
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glLoadIdentity();
+	gluLookAt( -1,2.0,0, 0.1,0,0, 0,1,0);	
+//	gluLookAt( position.x,position.y,position.z, -0.2,0,0, 0,1,0);	
+	draw3DScence();
+	if (isHUDActive)
+		draw2DHUD();
+	Sleep(10);		
 	glutSwapBuffers();
 }
 
@@ -305,11 +314,24 @@ void keyboard ( unsigned char key, int x, int y )
     case KEY_ESCAPE:        
       exit ( 0 );   
       break;      
+    case 32 :
+    	isHUDActive = true;
+    	break;
     default:      
       break;
-  }
+  }  
 }
-
+void keyUp( unsigned char key, int x, int y ){
+  switch ( key ){
+    case 32 :
+    	isHUDActive = false;
+    	force  = 0;
+    	fdir = -1;
+    	break;
+    default:      
+      break;
+  }  	
+}
 int main(int argc, char **argv) 
 {
 	// set window values
@@ -328,6 +350,7 @@ int main(int argc, char **argv)
 	glutDisplayFunc(display);									// register Display Function
 	glutIdleFunc( display );									// register Idle Function
     glutKeyboardFunc( keyboard );								// register Keyboard Handler
+    glutKeyboardUpFunc(keyUp);
 	initialize();
 
 	table = Table("resource/pooltable.obj", 1, &textures);	
@@ -351,7 +374,6 @@ int main(int argc, char **argv)
 	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
   	glutMouseFunc(MouseEvent);
   	glutMotionFunc(mouseMotion);
-  	glutKeyboardFunc( keyboardCam );		
   	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
 
 	
