@@ -86,7 +86,6 @@ void calculatePitch(float MouseDY){
 
 void calculateAngleAroundObject(float MouseDX){
 	//ensure that left button is down
-//	cout << MouseDX<<endl;
 	float angleChange = MouseDX * 0.1f;
 	angleAroundObject -= angleChange;
 }
@@ -161,7 +160,7 @@ typedef struct {
  * Program code
  ***************************************************************************/
 
-const int numOfBall = 3;
+const int numOfBall = 4;
 Table table;
 Ball* balls[numOfBall];
 Model_OBJ chairs;
@@ -227,12 +226,20 @@ void checkColisions(){
 
 void updateBalls(){
 	float dt= 0.1;
-	for (int i=0; i< numOfBall; ++i){
-		if (balls[i]->pos.y > 0.1)
-			balls[i]->pos = balls[i]->pos +  balls[i]->vel*dt;				
-		float stepLength = glm::length(balls[i]->vel*dt);
-		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);		
+	for (int i=0; i< numOfBall; ++i){										
+		float stepLength = glm::length(balls[i]->vel)*dt;
+		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);				
 		balls[i]->angle += rotateAngle;
+			
+		if ( glm::length(balls[i]->vel) < 0.01) 
+			balls[i]->vel = glm::vec3(0,0,0); 
+		else {
+			glm::vec3 acc = glm::normalize(balls[i]->vel)*-0.08f;							
+			balls[i]->vel = balls[i]->vel + acc*dt;
+		}
+				
+		if (balls[i]->pos.y > 0.22)
+			balls[i]->pos = balls[i]->pos +  balls[i]->vel*dt;											
 	}		
 }
 
@@ -258,18 +265,18 @@ void loadDoorAndImage()
 
 void loadBalls()
 {
-	balls[0] = new Ball("resource/Ball3.obj", 0, &textures);	
-	balls[0]->pos = glm::vec3(-0.1, 0.2774, 0.1);
-	balls[0]->vel = glm::vec3(-0.05, 0, -0.05);
-	balls[0]->acc = glm::vec3(-0.01, 0, -0.01);	
+	balls[0] = new Ball("resource/Ball0.obj", 0, &textures);	
+	balls[0]->pos = glm::vec3(-0.3, table.heigh + balls[0]->radius, 0);
+	balls[0]->vel = glm::vec3(0, 0, 0);	
 	balls[1] = new Ball("resource/Ball10.obj", 0, &textures);		
-	balls[1]->pos = glm::vec3(0.22, 0.2774, 0.1);
-	balls[1]->vel = glm::vec3(-0.05, 0, -0.05);
-	balls[1]->acc = glm::vec3(-0.01, 0, -0.01);			
+	balls[1]->pos = glm::vec3(0.2, table.heigh + balls[1]->radius, 0.0);
+	balls[1]->vel = glm::vec3(0, 0, 0);	
 	balls[2] = new Ball("resource/Ball13.obj", 0, &textures);		
-	balls[2]->pos = glm::vec3(0.4, 0.2774, -0.15);
-	balls[2]->vel = glm::vec3(-0.05, 0, -0.05);
-	balls[2]->acc = glm::vec3(-0.01, 0, -0.01);		
+	balls[2]->pos = glm::vec3(0.3, table.heigh + balls[2]->radius, 0.1);
+	balls[2]->vel = glm::vec3(0, 0, 0);	
+	balls[3] = new Ball("resource/Ball3.obj", 0, &textures);		
+	balls[3]->pos = glm::vec3(0.3, table.heigh + balls[3]->radius, -0.1);
+	balls[3]->vel = glm::vec3(0, 0, 0);	
 }
 
 
@@ -314,21 +321,34 @@ void drawDoorAndImage()
 	drawImage(DoorVerticies, Text_Coords);	 
 }
 
+void drawStick(){
+	if ( balls[0]->isInHole) return;
+	for ( int i=0; i< numOfBall; ++i)
+		if (glm::length(balls[0]->vel) > 0)	 return;
+	glm::vec3 stick = balls[0]->pos - glm::vec3(position.x, table.heigh, position.z);	
+	stick = glm::normalize(stick)*0.3f;	
+	glBegin(GL_LINES);
+		glVertex3f(balls[0]->pos.x, balls[0]->pos.y, balls[0]->pos.z);
+		glVertex3f(balls[0]->pos.x + stick.x, balls[0]->pos.y + stick.y, balls[0]->pos.z + stick.z);
+	glEnd();
+}
+
 void draw3DScence()
 {	
 	checkInHoles();	
 	checkColisions();
 	
-	table.draw();		
-	chairs.draw();	
-	room.draw();
-	drawDoorAndImage();
-	for (int i=0; i< numOfBall; ++i) balls[i]->draw();		
-
-	updateBalls();
+//	table.draw();
+//	chairs.draw();	
+//	room.draw();
+//	drawDoorAndImage();
+	drawStick();	
+	updateBalls();	
+	for (int i=0; i< numOfBall; ++i) balls[i]->draw();			
 }
  
 void draw2DHUD(){
+	if (!isHUDActive || balls[0]->isInHole) return;	
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -366,13 +386,21 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt( position.x,position.y,position.z, -0.3,0.2774,0, 0,1,0);		
+	gluLookAt( -1,2.0,0, 0.1,0,0, 0,1,0);	
+//	gluLookAt( position.x,position.y,position.z, -0.3,0.2774,0, 0,1,0);		
+	cout << balls[0]->pos.y <<" "<<balls[0]->isInHole<< endl;
 	draw3DScence();
 	if (isHUDActive)
 		draw2DHUD();
 //	Sleep(10);		
 	glutSwapBuffers();
 }
+void strikeBall(){
+	glm::vec2 cueVel2D = glm::vec2(balls[0]->pos.x,balls[0]->pos.z) - glm::vec2(position.x,position.z);	
+	cueVel2D = glm::normalize(cueVel2D)*(float)(force/100);	
+	glm::vec3 cueVel3D = glm::vec3(cueVel2D.x,0,cueVel2D.y);
+	balls[0]->vel = cueVel3D;
+}	
 
 
 void keyboard ( unsigned char key, int x, int y ) 
@@ -382,7 +410,8 @@ void keyboard ( unsigned char key, int x, int y )
       exit ( 0 );   
       break;      
     case 32 :
-    	isHUDActive = true;
+    	if (!balls[0]->isInHole)
+    		isHUDActive = true;
     	break;
     default:      
       break;
@@ -391,7 +420,8 @@ void keyboard ( unsigned char key, int x, int y )
 void keyUp( unsigned char key, int x, int y ){
   switch ( key ){
     case 32 :
-    	isHUDActive = false;
+    	isHUDActive = false;    	    	
+    	strikeBall();
     	force  = 0;
     	fdir = -1;
     	break;

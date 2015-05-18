@@ -6,7 +6,7 @@ Hole::Hole(glm::vec3 pos,float radius){
 bool Hole::isBallInHole(Ball *ball){
 	glm::vec3 distance = this->pos - ball->pos;
 	float length = glm::length(distance);
-	if ( length <= (this->radius + ball->radius+ 0.01) )
+	if ( length < (this->radius + ball->radius))
 		return true;
 	else 
 		return false;	

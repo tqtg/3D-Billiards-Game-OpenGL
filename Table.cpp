@@ -14,7 +14,7 @@ Table::Table(char* objFile, bool hasTexture, map<string, texture>* textures):Mod
 }
 
 bool Table::isBallHitLeftBorder(Ball *ball){
-	if ( ball->pos.x <= (this->left + ball->radius) ) 
+	if ( ball->pos.x < (this->left + ball->radius) ) 
 		return true;
 	else 
 		return false;
@@ -22,21 +22,21 @@ bool Table::isBallHitLeftBorder(Ball *ball){
 
 
 bool Table::isBallHitRightBorder(Ball *ball){
-	if ( ball->pos.x >= (this->right - ball->radius) )
+	if ( ball->pos.x > (this->right - ball->radius) )
 		return true;
 	else
 		return false;
 }
 
 bool Table::isBallHitTopBorder(Ball *ball){
-	if ( ball->pos.z <= (this->top + ball->radius) )
+	if ( ball->pos.z < (this->top + ball->radius) )
 		return true;
 	else 
 		return false;
 }
 
 bool Table::isBallHitBottomBorder(Ball *ball){
-	if ( ball->pos.z >= (this->bottom - ball->radius) )
+	if ( ball->pos.z > (this->bottom - ball->radius) )
 		return true;
 	else 
 		return false;	
@@ -45,20 +45,20 @@ bool Table::isBallHitBottomBorder(Ball *ball){
 void Table::resToBallHitTable(Ball *ball){
 	if ( isBallHitLeftBorder(ball) ){
 		ball->vel.x = -ball->vel.x;	
-		ball->pos.x = left + ball->radius + 0.01;
+		ball->pos.x = left + ball->radius;
 	} else 
 	if ( isBallHitRightBorder(ball) ){
 		ball->vel.x = -ball->vel.x;	
-		ball->pos.x = right - ball->radius - 0.01;
+		ball->pos.x = right - ball->radius;
 	}		
 				
 	if ( isBallHitTopBorder(ball)){
 		ball->vel.z = -ball->vel.z;								
-		ball->pos.z = top + ball->radius + 0.01;		
+		ball->pos.z = top + ball->radius;		
 	} else 
 	if ( isBallHitBottomBorder(ball)){
 		ball->vel.z = -ball->vel.z;								
-		ball->pos.z = bottom - ball->radius - 0.01;				
+		ball->pos.z = bottom - ball->radius;				
 	}
 		
 }
