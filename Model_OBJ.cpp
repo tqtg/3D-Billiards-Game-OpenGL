@@ -24,9 +24,9 @@ Model_OBJ::Model_OBJ(char* objFile, bool hasTexture, map<string, texture>* textu
 	this->total_vertices_floats = 0;
 	this->total_textures_coords_floats = 0;
 	this->total_normal_vectors_floats = 0;
+	this->hasTexture = hasTexture;
 	this->total_objects = 0;
 	this->total_materials = 0;
-	
 	this->name = objFile;
 	this->hasTexture = hasTexture;
 	this->textures = textures;

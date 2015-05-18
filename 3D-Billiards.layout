@@ -1,6 +1,40 @@
 [Editors]
+<<<<<<< HEAD
+Focused=5
+Order=5,4,6,3,1,0
+[Editor_0]
+Open=1
+Top=1
+<<<<<<< HEAD
+CursorCol=1
+CursorRow=258
+TopLine=261
+=======
+CursorCol=17
+CursorRow=164
+TopLine=127
+>>>>>>> 8bf29144477cb3cea65725b8d8813ccba1225c8d
+LeftChar=1
+[Editor_1]
+Open=1
+Top=0
+<<<<<<< HEAD
+CursorCol=19
+CursorRow=303
+TopLine=262
+=======
+CursorCol=29
+CursorRow=327
+TopLine=316
+>>>>>>> 8bf29144477cb3cea65725b8d8813ccba1225c8d
+=======
 Focused=1
+<<<<<<< HEAD
 Order=1,0,2
+=======
+Order=1,2,0
+LeftChar=1
+>>>>>>> Thong
 [Editor_0]
 Open=1
 Top=0
@@ -11,16 +45,41 @@ LeftChar=1
 [Editor_1]
 Open=1
 Top=1
+<<<<<<< HEAD
 CursorCol=2
 CursorRow=321
 TopLine=303
+=======
+CursorCol=37
+CursorRow=82
+TopLine=68
+>>>>>>> 32736f8a68d6ef093eb938415288f5aa59330d23
+>>>>>>> Thong
 LeftChar=1
 [Editor_2]
 Open=1
 Top=0
+<<<<<<< HEAD
 CursorCol=14
 CursorRow=70
 TopLine=45
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+CursorCol=21
+CursorRow=1
+TopLine=1
+=======
+CursorCol=1
+CursorRow=57
+TopLine=21
+>>>>>>> 8bf29144477cb3cea65725b8d8813ccba1225c8d
+=======
+CursorCol=12
+CursorRow=53
+TopLine=32
+>>>>>>> 32736f8a68d6ef093eb938415288f5aa59330d23
+>>>>>>> Thong
 LeftChar=1
 [Editor_3]
 Open=0
@@ -39,6 +98,7 @@ LeftChar=1
 [Editor_5]
 Open=1
 Top=0
+<<<<<<< HEAD
 CursorCol=3
 CursorRow=15
 TopLine=1
@@ -56,3 +116,29 @@ Top=0
 [Editor_8]
 Open=0
 Top=0
+=======
+CursorCol=14
+CursorRow=52
+TopLine=25
+LeftChar=1
+[Editor_4]
+CursorCol=7
+CursorRow=6
+TopLine=1
+LeftChar=1
+[Editor_5]
+CursorCol=1
+CursorRow=2
+TopLine=1
+LeftChar=1
+[Editor_6]
+CursorCol=20
+CursorRow=11
+TopLine=1
+LeftChar=1
+[Editor_9]
+CursorCol=18
+CursorRow=14
+TopLine=9
+LeftChar=1
+>>>>>>> Thong

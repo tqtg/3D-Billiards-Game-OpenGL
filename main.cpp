@@ -9,7 +9,8 @@
 #include <map>
 #include <list>
 #include "lib/SOIL.h"
-#include "Model_OBJ.h"
+#include "Table.h"
+
 
 using namespace std;
 
@@ -131,7 +132,9 @@ void mouseMotion(int x, int y){
 	}	
 }
 
-
+void keyboardCam(){
+	
+}
 /////////////////FOR CAMERA/////////////////////////////////////////////////////////////
 
 ////////////////////FOR CAMERA////////////////////////////////////////////////////
@@ -158,15 +161,16 @@ typedef struct {
  * Program code
  ***************************************************************************/
  
-Model_OBJ table;
-Model_OBJ ball_0;
-Model_OBJ ball_1;
-Model_OBJ ball_2;
-Model_OBJ ball_3;
+const int numOfBall = 3;
+Table table;
+Ball* balls[numOfBall];
 Model_OBJ chairs;
 Model_OBJ room;
 glutWindow win;
 map<string, texture> textures;
+float force = 0;
+float fdir = -1;
+bool isHUDActive = false;
 
 float ImageVertices[] = 
 {
@@ -238,27 +242,92 @@ void drawDoorAndImage()
 	glDisableClientState (GL_TEXTURE_COORD_ARRAY);	
 }
  
+void checkInHoles(){
+	for (int i=0; i< numOfBall; ++i){
+		if (!balls[i]->isInHole)
+		for (int j=0; j< 6;  ++j){
+			Hole* hole = table.holes[j];
+			if (hole->isBallInHole(balls[i])){
+				hole->resToBallInHole(balls[i]);
+				break;
+			}								
+		}
+	}	
+}
+
+void checkColisions(){
+	for (int i=0; i< numOfBall; ++i){
+		for (int j=i+1; j< numOfBall; ++j){
+			if ( !balls[i]->isInHole  && !balls[j]->isInHole && balls[i]->isBallHit(balls[j]) ){
+				balls[i]->resToBallHit(balls[j]);
+			}
+		}
+		if ( !balls[i]->isInHole ) table.resToBallHitTable(balls[i]);
+	}
+}
+
+void updateBalls(){
+	float dt= 0.1;
+	for (int i=0; i< numOfBall; ++i){
+		if (balls[i]->pos.y > 0.1)
+			balls[i]->pos = balls[i]->pos +  balls[i]->vel*dt;				
+		float stepLength = glm::length(balls[i]->vel*dt);
+		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);		
+		balls[i]->angle += rotateAngle;
+	}		
+}
+
+void draw3DScence(){
+	
+	checkInHoles();	
+	checkColisions();
+	
+	for (int i=0; i< numOfBall; ++i) balls[i]->draw();		
+	table.draw();		
+	chairs.draw();	
+	room.draw();
+	drawDoorAndImage();
+
+	updateBalls();
+}
+void draw2DHUD(){
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0,win.width, win.height, 0.0, -1.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);	
+	glLoadIdentity();
+	glDisable(GL_CULL_FACE);
+	glClear(GL_DEPTH_BUFFER_BIT);    							
+
+	float posx = win.width*0.05;
+	float posy = win.height*0.1;
+	float hudH= win.height*0.6;
+	float hudW = win.width*0.05;
+    
+	if ( force <= 0 || force >= 100) fdir*=-1;
+	force += 4*fdir;
+    hudH = hudH*force/100;	
+	glBegin(GL_POLYGON);  		  	
+		glVertex2f(posx, posy);
+		glVertex2f(posx+hudW, posy);				
+		glVertex2f(posx+hudW, posy+hudH);
+		glVertex2f(posx, posy+hudH);		
+	glEnd();						
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);		
+}
 void display() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	gluLookAt( position.x,position.y,position.z, -0.3,0.2774,0, 0,1,0);
-	
-	//	Draw objects
-	table.draw();
-	chairs.draw();
-	room.draw();
-	drawDoorAndImage();
-	
-	glTranslated(-0.3, 0.2774, 0);
-	ball_0.draw();
-	glTranslated(0.5, 0, 0);
-	ball_1.draw();
-	glTranslated(0.1, 0, 0.1);
-	ball_2.draw();
-	glTranslated(0, 0, -0.2);
-	ball_3.draw();
-
+	//gluLookAt( -1,2.0,0, 0.1,0,0, 0,1,0);	
+	gluLookAt( position.x,position.y,position.z, -0.3,0.2774,0, 0,1,0);		
+	draw3DScence();
+	if (isHUDActive)
+		draw2DHUD();
+	Sleep(10);		
 	glutSwapBuffers();
 }
 
@@ -313,9 +382,23 @@ void keyboard ( unsigned char key, int x, int y )
     case KEY_ESCAPE:        
       exit ( 0 );   
       break;      
+    case 32 :
+    	isHUDActive = true;
+    	break;
     default:      
       break;
-  }
+  }  
+}
+void keyUp( unsigned char key, int x, int y ){
+  switch ( key ){
+    case 32 :
+    	isHUDActive = false;
+    	force  = 0;
+    	fdir = -1;
+    	break;
+    default:      
+      break;
+  }  	
 }
 
 void reshape (int width, int height) {  
@@ -338,32 +421,42 @@ int main(int argc, char **argv)
 	win.z_far = 500.0f;
 	
 	// initialize and run program
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );
-	glutInitWindowSize(win.width,win.height);
-	glutCreateWindow(win.title);
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape); 
-	glutIdleFunc( display );
-    glutKeyboardFunc( keyboard );
+	glutInit(&argc, argv);                                      // GLUT initialization
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH );  // Display Mode
+	glutInitWindowSize(win.width,win.height);					// set window size
+	glutCreateWindow(win.title);								// create Window
+	glutDisplayFunc(display);									// register Display Function
+	glutIdleFunc( display );									// register Idle Function
+    glutKeyboardFunc( keyboard );								// register Keyboard Handler
+    glutKeyboardUpFunc(keyUp);
 	initialize();
 
-	table = Model_OBJ("resource/pooltable.obj", 1, &textures);
+	table = Table("resource/pooltable.obj", 1, &textures);
 	chairs = Model_OBJ("resource/chairs.obj", 0, &textures);
 	room = Model_OBJ("resource/Room.obj", 1, &textures);
+		
+	balls[0] = new Ball("resource/Ball0.obj", 0, &textures);	
+	balls[0]->pos = glm::vec3(-0.1, 0.2774, 0.1);
+	balls[0]->vel = glm::vec3(-0.05, 0, -0.05);
+	balls[0]->acc = glm::vec3(-0.01, 0, -0.01);	
+	balls[1] = new Ball("resource/Ball1.obj", 0, &textures);		
+	balls[1]->pos = glm::vec3(0.22, 0.2774, 0.1);
+	balls[1]->vel = glm::vec3(-0.05, 0, -0.05);
+	balls[1]->acc = glm::vec3(-0.01, 0, -0.01);			
+	balls[2] = new Ball("resource/Ball3.obj", 0, &textures);		
+	balls[2]->pos = glm::vec3(0.4, 0.2774, -0.15);
+	balls[2]->vel = glm::vec3(-0.05, 0, -0.05);
+	balls[2]->acc = glm::vec3(-0.01, 0, -0.01);			
 	
 	loadDoorAndImage();
-	
-	ball_0 = Model_OBJ("resource/Ball0.obj", 0, &textures);
-	ball_1 = Model_OBJ("resource/ball3.obj", 0, &textures);
-	ball_2 = Model_OBJ("resource/ball10.obj", 0, &textures);
-	ball_3 = Model_OBJ("resource/ball13.obj", 0, &textures);
+
 
 
 	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
   	glutMouseFunc(MouseEvent);
   	glutMotionFunc(mouseMotion);
   	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
+
 	
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
