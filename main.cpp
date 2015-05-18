@@ -215,7 +215,7 @@ void checkColisions(){
 }
 
 void updateBalls(){
-	float dt= 0.1;
+	float dt= 0.05;
 	for (int i=0; i< numOfBall; ++i){										
 		float stepLength = glm::length(balls[i]->vel)*dt;
 		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);				
@@ -394,13 +394,12 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();	
-//	gluLookAt( position.x,position.y,position.z, 0, table.heigh, 0, 0,1,0);	
 	gluLookAt( position.x,position.y,position.z, balls[0]->pos[0], balls[0]->pos[1], balls[0]->pos[2], 0,1,0);	
-//	cout << balls[0]->pos.y <<" "<<balls[0]->isInHole<< endl;
+
 	draw3DScence();
 	if (isHUDActive)
 		draw2DHUD();
-//	Sleep(10);		
+	Sleep(10);		
 	glutSwapBuffers();
 }
 void strikeBall(){
