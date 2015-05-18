@@ -160,7 +160,7 @@ typedef struct {
 /***************************************************************************
  * Program code
  ***************************************************************************/
- 
+
 const int numOfBall = 3;
 Table table;
 Ball* balls[numOfBall];
@@ -180,15 +180,6 @@ float ImageVertices[] =
 	-0.125526, 0.407483, -1.984869
 };
 
-float Text_Coords[] = 
-{
-	0.000000, 0.000000,
-	1.000000, 0.000000,
-	1.000000, 1.000000,
-	0.000000, 1.000000
-};
-
-
 float DoorVerticies[] = 
 {
 	-1.133465, 1.184256, -1.986908,
@@ -196,52 +187,20 @@ float DoorVerticies[] =
 	-1.633465, 0.004256, -1.986908,
 	-1.633465, 1.184256, -1.986908
 };
-			
-void loadDoorAndImage()
-{
-	texture tex;
-	string textureName = "BacHo.jpg";
-	string texturePath = "resource/" + textureName;
-	tex.image = SOIL_load_image(texturePath.c_str(), &(tex.width), &(tex.height), NULL, 0);
-	textures.insert(textures.find(textureName), pair<string, texture>(textureName, tex));
-	
-	texture door;
-	textureName = "door.jpg";
-	texturePath = "resource/" + textureName;
-	door.image = SOIL_load_image(texturePath.c_str(), &(door.width), &(door.height), NULL, 0);
-	textures.insert(textures.find(textureName), pair<string, texture>(textureName, door));
-}
 
-void drawDoorAndImage()
+float Text_Coords[] = 
 {
-	glEnableClientState(GL_VERTEX_ARRAY);
- 	glEnableClientState (GL_TEXTURE_COORD_ARRAY);
+	0.000000, 0.000000,
+	1.000000, 0.000000,
+	1.000000, 1.000000,
+	0.000000, 1.000000
+};
 	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);		
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-	glEnable(GL_TEXTURE_2D);
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures.find("BacHo.jpg")->second).width, (textures.find("BacHo.jpg")->second).height,
-				0, GL_RGB, GL_UNSIGNED_BYTE, (textures.find("BacHo.jpg")->second).image);
-		 	
-	glVertexPointer(3, GL_FLOAT, 0, ImageVertices);
-	glTexCoordPointer(2, GL_FLOAT, 0, Text_Coords);
-	glDrawArrays(GL_QUADS, 0, 11);
-		
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures.find("door.jpg")->second).width, (textures.find("door.jpg")->second).height,
-				0, GL_RGB, GL_UNSIGNED_BYTE, (textures.find("door.jpg")->second).image);
-		 	
-	glVertexPointer(3, GL_FLOAT, 0, DoorVerticies);
-	glTexCoordPointer(2, GL_FLOAT, 0, Text_Coords);
-	glDrawArrays(GL_QUADS, 0, 11);
-	
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState (GL_TEXTURE_COORD_ARRAY);	
-}
- 
+/************************************************************************
+  Collisions Checking and Updating
+ ************************************************************************/
+
 void checkInHoles(){
 	for (int i=0; i< numOfBall; ++i){
 		if (!balls[i]->isInHole)
@@ -277,19 +236,98 @@ void updateBalls(){
 	}		
 }
 
-void draw3DScence(){
+
+/************************************************************************
+  Objects Loading
+ ************************************************************************/
+		
+void loadDoorAndImage()
+{
+	texture tex;
+	string textureName = "BacHo.jpg";
+	string texturePath = "resource/" + textureName;
+	tex.image = SOIL_load_image(texturePath.c_str(), &(tex.width), &(tex.height), NULL, 0);
+	textures.insert(textures.find(textureName), pair<string, texture>(textureName, tex));
 	
+	texture door;
+	textureName = "door.jpg";
+	texturePath = "resource/" + textureName;
+	door.image = SOIL_load_image(texturePath.c_str(), &(door.width), &(door.height), NULL, 0);
+	textures.insert(textures.find(textureName), pair<string, texture>(textureName, door));
+}
+
+void loadBalls()
+{
+	balls[0] = new Ball("resource/Ball3.obj", 0, &textures);	
+	balls[0]->pos = glm::vec3(-0.1, 0.2774, 0.1);
+	balls[0]->vel = glm::vec3(-0.05, 0, -0.05);
+	balls[0]->acc = glm::vec3(-0.01, 0, -0.01);	
+	balls[1] = new Ball("resource/Ball10.obj", 0, &textures);		
+	balls[1]->pos = glm::vec3(0.22, 0.2774, 0.1);
+	balls[1]->vel = glm::vec3(-0.05, 0, -0.05);
+	balls[1]->acc = glm::vec3(-0.01, 0, -0.01);			
+	balls[2] = new Ball("resource/Ball13.obj", 0, &textures);		
+	balls[2]->pos = glm::vec3(0.4, 0.2774, -0.15);
+	balls[2]->vel = glm::vec3(-0.05, 0, -0.05);
+	balls[2]->acc = glm::vec3(-0.01, 0, -0.01);		
+}
+
+
+/************************************************************************
+  Objects Drawing
+ ************************************************************************/
+
+void drawImage(float ImageVertices[], float Text_Coords[])
+{
+	glBegin(GL_QUADS);
+	
+	glTexCoord2f(Text_Coords[0], Text_Coords[1]);
+	glVertex3f(ImageVertices[0], ImageVertices[1], ImageVertices[2]);
+	
+	glTexCoord2f(Text_Coords[2], Text_Coords[3]);
+	glVertex3f(ImageVertices[3], ImageVertices[4], ImageVertices[5]);
+	
+	glTexCoord2d(Text_Coords[4], Text_Coords[5]);
+	glVertex3f(ImageVertices[6], ImageVertices[7], ImageVertices[8]);
+	
+	glTexCoord2d(Text_Coords[6], Text_Coords[7]);
+	glVertex3f(ImageVertices[9], ImageVertices[10], ImageVertices[11]);
+	
+	glEnd();
+}
+
+void drawDoorAndImage()
+{
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);		
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	glEnable(GL_TEXTURE_2D);
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures.find("BacHo.jpg")->second).width, (textures.find("BacHo.jpg")->second).height,
+				0, GL_RGB, GL_UNSIGNED_BYTE, (textures.find("BacHo.jpg")->second).image);
+	drawImage(ImageVertices, Text_Coords);	 
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures.find("door.jpg")->second).width, (textures.find("door.jpg")->second).height,
+				0, GL_RGB, GL_UNSIGNED_BYTE, (textures.find("door.jpg")->second).image);
+	drawImage(DoorVerticies, Text_Coords);	 
+}
+
+void draw3DScence()
+{	
 	checkInHoles();	
 	checkColisions();
 	
-	for (int i=0; i< numOfBall; ++i) balls[i]->draw();		
 	table.draw();		
 	chairs.draw();	
 	room.draw();
 	drawDoorAndImage();
+	for (int i=0; i< numOfBall; ++i) balls[i]->draw();		
 
 	updateBalls();
 }
+ 
 void draw2DHUD(){
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -318,19 +356,58 @@ void draw2DHUD(){
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);		
 }
+ 
+ 
+/************************************************************************
+  GLUT Functions
+ ************************************************************************/
+
 void display() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	//gluLookAt( -1,2.0,0, 0.1,0,0, 0,1,0);	
 	gluLookAt( position.x,position.y,position.z, -0.3,0.2774,0, 0,1,0);		
 	draw3DScence();
 	if (isHUDActive)
 		draw2DHUD();
-	Sleep(10);		
+//	Sleep(10);		
 	glutSwapBuffers();
 }
 
+
+void keyboard ( unsigned char key, int x, int y ) 
+{
+  switch ( key ) {
+    case KEY_ESCAPE:        
+      exit ( 0 );   
+      break;      
+    case 32 :
+    	isHUDActive = true;
+    	break;
+    default:      
+      break;
+  }  
+}
+void keyUp( unsigned char key, int x, int y ){
+  switch ( key ){
+    case 32 :
+    	isHUDActive = false;
+    	force  = 0;
+    	fdir = -1;
+    	break;
+    default:      
+      break;
+  }  	
+}
+
+void reshape (int width, int height) {  
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+	glMatrixMode(GL_PROJECTION); 
+	glLoadIdentity();
+	GLfloat aspect = (GLfloat) win.width / win.height;
+	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
+	glMatrixMode(GL_MODELVIEW);
+}  
 
 void initialize () 
 {
@@ -375,41 +452,6 @@ void initialize ()
     glEnable( GL_DEPTH_TEST );
 }
 
-
-void keyboard ( unsigned char key, int x, int y ) 
-{
-  switch ( key ) {
-    case KEY_ESCAPE:        
-      exit ( 0 );   
-      break;      
-    case 32 :
-    	isHUDActive = true;
-    	break;
-    default:      
-      break;
-  }  
-}
-void keyUp( unsigned char key, int x, int y ){
-  switch ( key ){
-    case 32 :
-    	isHUDActive = false;
-    	force  = 0;
-    	fdir = -1;
-    	break;
-    default:      
-      break;
-  }  	
-}
-
-void reshape (int width, int height) {  
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-	glMatrixMode(GL_PROJECTION); 
-	glLoadIdentity();
-	GLfloat aspect = (GLfloat) win.width / win.height;
-	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
-	glMatrixMode(GL_MODELVIEW);
-}  
-
 int main(int argc, char **argv) 
 {
 	// set window values
@@ -434,30 +476,14 @@ int main(int argc, char **argv)
 	table = Table("resource/pooltable.obj", 1, &textures);
 	chairs = Model_OBJ("resource/chairs.obj", 0, &textures);
 	room = Model_OBJ("resource/Room.obj", 1, &textures);
-		
-	balls[0] = new Ball("resource/Ball0.obj", 0, &textures);	
-	balls[0]->pos = glm::vec3(-0.1, 0.2774, 0.1);
-	balls[0]->vel = glm::vec3(-0.05, 0, -0.05);
-	balls[0]->acc = glm::vec3(-0.01, 0, -0.01);	
-	balls[1] = new Ball("resource/Ball1.obj", 0, &textures);		
-	balls[1]->pos = glm::vec3(0.22, 0.2774, 0.1);
-	balls[1]->vel = glm::vec3(-0.05, 0, -0.05);
-	balls[1]->acc = glm::vec3(-0.01, 0, -0.01);			
-	balls[2] = new Ball("resource/Ball3.obj", 0, &textures);		
-	balls[2]->pos = glm::vec3(0.4, 0.2774, -0.15);
-	balls[2]->vel = glm::vec3(-0.05, 0, -0.05);
-	balls[2]->acc = glm::vec3(-0.01, 0, -0.01);			
-	
 	loadDoorAndImage();
-
-
-
+	loadBalls();
+	
 	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
   	glutMouseFunc(MouseEvent);
   	glutMotionFunc(mouseMotion);
   	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
 
-	
 	glutMainLoop();												// run GLUT mainloop
 	return 0;
 }

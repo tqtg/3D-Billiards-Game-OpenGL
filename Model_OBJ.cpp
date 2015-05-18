@@ -36,7 +36,19 @@ Model_OBJ::Model_OBJ(char* objFile, bool hasTexture, map<string, texture>* textu
 
 Model_OBJ::~Model_OBJ()
 {
+//	for (int i = 0; i < total_objects; i++)
+//	{
+//		delete objects[i].material;
+//		delete [] objects[i].faces_triangles;
+//		delete [] objects[i].norm_vectors;
+//		delete [] objects[i].texts_coords;
+//	}
 	
+//	delete [] materials;
+//	delete vertexBuffer;
+//	delete vtBuffer;
+//	delete vnBuffer;
+//	delete textures;
 }
 
 int Model_OBJ::loadMTL(char* filename)
