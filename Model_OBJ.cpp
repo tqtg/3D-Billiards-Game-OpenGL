@@ -26,11 +26,10 @@ Model_OBJ::Model_OBJ(char* objFile, bool hasTexture, map<string, texture>* textu
 	this->total_normal_vectors_floats = 0;
 	this->total_objects = 0;
 	this->total_materials = 0;
+	
+	this->name = objFile;
 	this->hasTexture = hasTexture;
-	if (hasTexture)
-	{
-		this->textures = textures;
-	}
+	this->textures = textures;
 	
 	this->loadOBJ(objFile, hasTexture);
 }
@@ -173,7 +172,7 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 				
 				const char* cstr = mtlFile.c_str();
 				total_materials = loadMTL(cstr);
-				cout << "Number of mtl: " << total_materials << endl;
+				cout << "Number of mtl: " << loadMTL(cstr) << endl;
 			}
 			
 			// Create new object
@@ -212,7 +211,7 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 					&vertexBuffer[total_vertices_floats + 1], 
 					&vertexBuffer[total_vertices_floats + 2]);
 
-				total_vertices_floats += FLOATS_PER_VERTEX;	
+				total_vertices_floats += FLOATS_PER_VERTEX;		
 			}
 			
 			//	Read texture coordinates
@@ -271,9 +270,9 @@ void Model_OBJ::loadOBJ(char* filename, bool hasTexture)
 					&vertexNumber[2], &vnNumber[2]);		
 				}
 				
-				vertexNumber[0] -= 1;									// OBJ file starts counting from 1
-				vertexNumber[1] -= 1;									// OBJ file starts counting from 1
-				vertexNumber[2] -= 1;									// OBJ file starts counting from 1
+				vertexNumber[0] -= 1;										// OBJ file starts counting from 1
+				vertexNumber[1] -= 1;										// OBJ file starts counting from 1
+				vertexNumber[2] -= 1;										// OBJ file starts counting from 1
 				
 				vnNumber[0] -= 1;										// OBJ file starts counting from 1
 				vnNumber[1] -= 1;										// OBJ file starts counting from 1
@@ -315,22 +314,30 @@ void Model_OBJ::draw()
  	glEnableClientState(GL_NORMAL_ARRAY);						
  	glEnableClientState (GL_TEXTURE_COORD_ARRAY);			
  	
+ 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	
+	if (name.compare("resource/Room.obj") == 0)
+	{
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	}
+	else
+	{
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
+ 	
 	for (int i = 0; i < total_objects; i++)
 	{
 		material* mtl = objects[i].material;
 		
 		if (mtl->hasTexture)
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-			
+		{	
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures->find(mtl->texture)->second).width, (textures->find(mtl->texture)->second).height,
 						 0, GL_RGB, GL_UNSIGNED_BYTE, (textures->find(mtl->texture)->second).image);
 			
 		 	glEnable(GL_TEXTURE_2D);
-		 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		}
 		else
 		{

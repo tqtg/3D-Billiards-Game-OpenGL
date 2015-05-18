@@ -281,54 +281,37 @@ void initialize ()
 	gluPerspective(win.field_of_view_angle, aspect, win.z_near, win.z_far);
     glMatrixMode(GL_MODELVIEW);
     glClearColor( 0.29, 0.3, 0.313, 1.0 );
-//    glClearDepth( 1.0f );
+    glClearDepth( 1.0f );
     
-    glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LEQUAL );
-    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
- 
     GLfloat amb_light[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
     
-    
     glLightModelfv( GL_LIGHT_MODEL_AMBIENT, amb_light );
-    
-    glLightfv( GL_LIGHT0, GL_DIFFUSE, diffuse );
-    glLightfv( GL_LIGHT0, GL_SPECULAR, specular );
-    GLfloat light0_pos[] = {0, 2, 0, 1};
-    GLfloat spot_direction[] = { -1.0, 2.0, 0.0 };
-	glLightfv(GL_LIGHT0, GL_POSITION, light0_pos) ;
-	glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.5);
-	glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.5);
-	glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.2);
-	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45.0);
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 2.0);
-    glEnable( GL_LIGHT0 );
     
     glLightfv( GL_LIGHT1, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT1, GL_SPECULAR, specular );
-    GLfloat light1_pos[] = {0, 2, 0, 1};
+    GLfloat light1_pos[] = {0, 1, 0, 1};
 	glLightfv(GL_LIGHT1, GL_POSITION, light1_pos) ;
     glEnable( GL_LIGHT1 );
     
     glLightfv( GL_LIGHT2, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT2, GL_SPECULAR, specular );
-    GLfloat light2_pos[] = {0.5, 0.5, 0.5, 1};
+    GLfloat light2_pos[] = {-1, 1, 0, 1};
 	glLightfv(GL_LIGHT2, GL_POSITION, light2_pos) ;
     glEnable( GL_LIGHT2 );
     
     glLightfv( GL_LIGHT3, GL_DIFFUSE, diffuse );
     glLightfv( GL_LIGHT3, GL_SPECULAR, specular );
-    GLfloat light3_pos[] = {-1.5, 1, 1, 1};
+    GLfloat light3_pos[] = {1, 1, 0, 1};
 	glLightfv(GL_LIGHT3, GL_POSITION, light3_pos) ;
     glEnable( GL_LIGHT3 );
+    
+    glEnable(GL_LIGHTING);
     
     glShadeModel( GL_SMOOTH );
     glDepthFunc( GL_LEQUAL );
     glEnable( GL_DEPTH_TEST );
-    glEnable(GL_LIGHTING);
 }
 
 
@@ -372,9 +355,6 @@ int main(int argc, char **argv)
 	glutIdleFunc( display );
     glutKeyboardFunc( keyboard );
 	initialize();
-
-    
-//    createMenu();
 
 	table = Model_OBJ("resource/pooltable.obj", 1, &textures);
 	chairs = Model_OBJ("resource/chairs.obj", 0, &textures);

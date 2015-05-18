@@ -67,6 +67,8 @@ private:
 	object objects[MAX_OBJ];
 	map<string, texture>* textures;
 	
+	string name;	
+	
 	float* vertexBuffer;
 	float* vtBuffer;
 	float* vnBuffer;
@@ -77,8 +79,6 @@ private:
 	long total_normal_vectors_floats;
 	int total_objects;
 	int total_materials;
-	
-public:
 
 public:		
 	Model_OBJ();
