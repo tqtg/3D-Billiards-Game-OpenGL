@@ -167,38 +167,32 @@ Model_OBJ chairs;
 Model_OBJ room;
 glutWindow win;
 map<string, texture> textures;
- 
- 
 
-float ImageVertices[] = {
--0.125526, 1.407483, -1.984869,
-1.309474, 1.407483, -1.984869,
-1.309474, 0.407483, -1.984869,
--0.125526, 0.407483, -1.984869
+float ImageVertices[] = 
+{
+	-0.125526, 1.407483, -1.984869,
+	1.309474, 1.407483, -1.984869,
+	1.309474, 0.407483, -1.984869,
+	-0.125526, 0.407483, -1.984869
 };
 
-float Text_Coords[] = {
-0.000000, 0.000000,
-1.000000, 0.000000,
-1.000000, 1.000000,
-0.000000, 1.000000
+float Text_Coords[] = 
+{
+	0.000000, 0.000000,
+	1.000000, 0.000000,
+	1.000000, 1.000000,
+	0.000000, 1.000000
 };
 
-float DoorVerticies[] = {	
--1.633465, 0.007121, -0.677675,
--1.133465, 0.007121, -0.677675,
--1.133465, 0.007121, -1.857675,
--1.633465, 0.007121, -1.857675
 
+float DoorVerticies[] = 
+{
+	-1.133465, 1.184256, -1.986908,
+	-1.133465, 0.004256, -1.986908,
+	-1.633465, 0.004256, -1.986908,
+	-1.633465, 1.184256, -1.986908
 };
-
-//float DoorVerticies[] = {
-//-1.633465, 0.004256, -1.986908,
-//-1.133465, 0.004256, -1.986908,
-//-1.633465, 1.184256, -1.986908,
-//-1.133465, 1.184256, -1.986908
-//};
-					
+			
 void loadDoorAndImage()
 {
 	texture tex;
@@ -207,11 +201,11 @@ void loadDoorAndImage()
 	tex.image = SOIL_load_image(texturePath.c_str(), &(tex.width), &(tex.height), NULL, 0);
 	textures.insert(textures.find(textureName), pair<string, texture>(textureName, tex));
 	
-//	texture door;
-//	textureName = "door.jpg";
-//	texturePath = "resource/" + textureName;
-//	door.image = SOIL_load_image(texturePath.c_str(), &(door.width), &(door.height), NULL, 0);
-//	textures.insert(textures.find(textureName), pair<string, texture>(textureName, door));
+	texture door;
+	textureName = "door.jpg";
+	texturePath = "resource/" + textureName;
+	door.image = SOIL_load_image(texturePath.c_str(), &(door.width), &(door.height), NULL, 0);
+	textures.insert(textures.find(textureName), pair<string, texture>(textureName, door));
 }
 
 void drawDoorAndImage()
@@ -233,12 +227,12 @@ void drawDoorAndImage()
 	glTexCoordPointer(2, GL_FLOAT, 0, Text_Coords);
 	glDrawArrays(GL_QUADS, 0, 11);
 		
-//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures.find("door.jpg")->second).width, (textures.find("door.jpg")->second).height,
-//				0, GL_RGB, GL_UNSIGNED_BYTE, (textures.find("door.jpg")->second).image);
-//		 	
-//	glVertexPointer(3, GL_FLOAT, 0, DoorVerticies);
-//	glTexCoordPointer(2, GL_FLOAT, 0, Text_Coords);
-//	glDrawArrays(GL_QUADS, 0, 11);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (textures.find("door.jpg")->second).width, (textures.find("door.jpg")->second).height,
+				0, GL_RGB, GL_UNSIGNED_BYTE, (textures.find("door.jpg")->second).image);
+		 	
+	glVertexPointer(3, GL_FLOAT, 0, DoorVerticies);
+	glTexCoordPointer(2, GL_FLOAT, 0, Text_Coords);
+	glDrawArrays(GL_QUADS, 0, 11);
 	
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState (GL_TEXTURE_COORD_ARRAY);	
@@ -248,14 +242,12 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-//	gluLookAt( -1.1,1.1,0, 0.3,0,0, 0,1,0);
 	gluLookAt( position.x,position.y,position.z, -0.3,0.2774,0, 0,1,0);
 	
 	//	Draw objects
 	table.draw();
 	chairs.draw();
 	room.draw();
-	
 	drawDoorAndImage();
 	
 	glTranslated(-0.3, 0.2774, 0);
@@ -371,7 +363,6 @@ int main(int argc, char **argv)
 	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
   	glutMouseFunc(MouseEvent);
   	glutMotionFunc(mouseMotion);
-//  	glutKeyboardFunc( keyboardCam );		
   	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
 	
 	glutMainLoop();												// run GLUT mainloop
