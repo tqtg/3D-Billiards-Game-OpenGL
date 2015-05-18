@@ -34,27 +34,10 @@ Model_OBJ::Model_OBJ(char* objFile, bool hasTexture, map<string, texture>* textu
 	this->loadOBJ(objFile, hasTexture);
 }
 
-Model_OBJ::~Model_OBJ()
-{
-//	for (int i = 0; i < total_objects; i++)
-//	{
-//		delete objects[i].material;
-//		delete [] objects[i].faces_triangles;
-//		delete [] objects[i].norm_vectors;
-//		delete [] objects[i].texts_coords;
-//	}
-	
-//	delete [] materials;
-//	delete vertexBuffer;
-//	delete vtBuffer;
-//	delete vnBuffer;
-//	delete textures;
-}
+Model_OBJ::~Model_OBJ() {}
 
 int Model_OBJ::loadMTL(char* filename)
 {
-	cout << "MTL is loading ...\n";
-	
 	int nMtl = -1;
 	string line;
 	ifstream mtlFile (filename);
@@ -78,52 +61,42 @@ int Model_OBJ::loadMTL(char* filename)
 				
 				string l = "newmtl ";
 				materials[nMtl].name = line.substr(l.size());
-				cout << "newmtl " << materials[nMtl].name << endl;
 			}
 			else if (type.compare("Ns") == 0)
 			{
 				sscanf(line.c_str(), "Ns %f", &(materials[nMtl].Ns));
-				cout << "Ns " << materials[nMtl].Ns << endl;
 			}
 			else if (type.compare("Ka") == 0)
 			{
 				sscanf(line.c_str(), "Ka %f %f %f", &(materials[nMtl].Ka[0]), &(materials[nMtl].Ka[1]), &(materials[nMtl].Ka[2]));
-				cout << "Ka " << materials[nMtl].Ka[0] << " " << materials[nMtl].Ka[1] << " " << materials[nMtl].Ka[2] << endl;
 			}
 			else if (type.compare("Kd") == 0)
 			{
 				sscanf(line.c_str(), "Kd %f %f %f", &(materials[nMtl].Kd[0]), &(materials[nMtl].Kd[1]), &(materials[nMtl].Kd[2]));
-				cout << "Kd " << materials[nMtl].Kd[0] << " " << materials[nMtl].Kd[1] << " " << materials[nMtl].Kd[2] << endl;
 			}
 			else if (type.compare("Ks") == 0)
 			{
 				sscanf(line.c_str(), "Ks %f %f %f", &(materials[nMtl].Ks[0]), &(materials[nMtl].Ks[1]), &(materials[nMtl].Ks[2]));
-				cout << "Ks " << materials[nMtl].Ks[0] << " " << materials[nMtl].Ks[1] << " " << materials[nMtl].Ks[2] << endl;
 			}
 			else if (type.compare("Ni") == 0)
 			{
 				sscanf(line.c_str(), "Ni %f", &(materials[nMtl].Ni));
-				cout << "Ni " << materials[nMtl].Ni << endl;
 			}
 			else if (type.compare("d ") == 0)
 			{
 				sscanf(line.c_str(), "d %f", &(materials[nMtl].d));
-				cout << "d " << materials[nMtl].d << endl;
 			}
 			else if (type.compare("il") == 0)
 			{
 				sscanf(line.c_str(), "illum %d", &(materials[nMtl].illum));
-				cout << "illum " << materials[nMtl].illum << endl;
 			}
 			else if (type.compare("ma") == 0)
 			{
 				materials[nMtl].hasTexture = true;
-				
+		
 				string l = "map_Kd ";
 				string textureName = line.substr(l.size());
-				
 				materials[nMtl].texture = textureName;
-				cout << "map_Kd " << materials[nMtl].texture << endl;
 				
 				map<string, texture>::iterator it = textures->find(textureName);
 				if (it == textures->end())

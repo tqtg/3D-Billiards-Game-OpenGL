@@ -17,45 +17,21 @@ using namespace std;
 #define KEY_ESCAPE 27
 
 
-////////////////////FOR CAMERA////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-
-class Vector3f {
-	public:
-		float x, y, z;
-		Vector3f(float x, float y, float z){
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		}
-		void Set(float x, float y, float z){
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		}
-};
-
-class ball {
-	public:
-		float x,y,z;
-		ball(float x, float y, float z){
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		}
-};
-
-ball testball(0.000,0.000, 0.000);
-
+/************************************************************************
+	Camera
+ ************************************************************************/
+const int numOfBall = 4;
+Ball* balls[numOfBall];
 float PI = 3.14;
-Vector3f position(0, 5, 0);
-float distanceFromObject = 5;
+glm::vec3 position(1, 1, 1);
+float distanceFromObject = 1.792;
 float angleAroundObject = 0;
-float pitch = 20;
+float pitch = -40;
 float yaw = 0;
 float roll;
+float originalPitch;
 int oldMouseX, oldMouseY;
-bool mouseDown, isLeftClick, isRightClick;
+bool mouseDown, isLeftClick, isRightClick, flag;
 
 float calculateHorizontalDistance(){
 	return distanceFromObject*cos(pitch*PI/180);
@@ -64,13 +40,13 @@ float calculateVerticalDistance(){
 	return distanceFromObject*sin(pitch*PI/180);
 }
 
-void calculateCameraPosition(ball Ball, float horizDistance, float verticDistance){
+void calculateCameraPosition(float horizDistance, float verticDistance){
 	float theta = 0 + angleAroundObject;
 	float offsetX = horizDistance * sin(theta*PI/180);
 	float offsetZ = horizDistance * cos(theta*PI/180);
-	position.x = Ball.x - offsetX;
-	position.z = Ball.y - offsetZ;
-	position.y = Ball.y - verticDistance;
+	position.x = balls[0]->pos[0] - offsetX;
+	position.z = balls[0]->pos[1] - offsetZ;
+	position.y = balls[0]->pos[1] - verticDistance;
 }
 
 void calculateZoom(float command){
@@ -80,13 +56,17 @@ void calculateZoom(float command){
 
 void calculatePitch(float MouseDY){
 	//ensure that right button is down
-	float pitchChange = MouseDY * 0.1f;
-	pitch -= pitchChange;	
+	originalPitch = pitch;
+	pitch -= MouseDY * 0.08f;
+	if (!(abs(pitch)>1 && abs(pitch)<40) | pitch>=0){
+		pitch = originalPitch;
+	}
+//	cout << pitch << endl;
 }
 
 void calculateAngleAroundObject(float MouseDX){
 	//ensure that left button is down
-	float angleChange = MouseDX * 0.1f;
+	float angleChange = MouseDX * 0.08f;
 	angleAroundObject -= angleChange;
 }
 
@@ -96,12 +76,11 @@ void move(float command, float MouseDY, float MouseDX){
 	calculateAngleAroundObject(MouseDX);
 	float horizontalDistance = calculateHorizontalDistance();
 	float verticalDistance = calculateVerticalDistance();
-	calculateCameraPosition(testball, horizontalDistance, verticalDistance);
+	calculateCameraPosition(horizontalDistance, verticalDistance);
 	yaw = 180 - angleAroundObject;
 }
 
 
-/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
 void MouseEvent(int button, int state, int x, int y){
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
 		isLeftClick = true;
@@ -125,8 +104,8 @@ void mouseMotion(int x, int y){
 	}
 	if (isRightClick){
 		int DY = y - oldMouseY;
-		if (DY>0) move(1, 0, 0);
-		if (DY<0 && distanceFromObject > 2) move(-1, 0, 0);
+		if (DY>0 && distanceFromObject < 2.4) move(1, 0, 0);
+		if (DY<0 && distanceFromObject > 1.5) move(-1, 0, 0);
 		oldMouseY = y;
 	}	
 }
@@ -134,10 +113,9 @@ void mouseMotion(int x, int y){
 void keyboardCam(){
 	
 }
-/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
-
-////////////////////FOR CAMERA////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
+/************************************************************************
+	Camera
+ ************************************************************************/
 
 
 /************************************************************************
@@ -159,10 +137,7 @@ typedef struct {
 /***************************************************************************
  * Program code
  ***************************************************************************/
-
-const int numOfBall = 4;
 Table table;
-Ball* balls[numOfBall];
 Model_OBJ chairs;
 Model_OBJ room;
 glutWindow win;
@@ -211,6 +186,21 @@ void checkInHoles(){
 			}								
 		}
 	}	
+	flag = false;
+	if (balls[0]->isInHole){
+		for (int i=0; i< numOfBall; ++i){
+			if (glm::length(balls[i]->vel) != 0){
+				flag = true;
+				break;
+			}
+		}
+		if ( flag == false){
+			Sleep (200);
+			balls[0]->pos = glm::vec3(-0.3, table.heigh + balls[0]->radius, 0);
+			balls[0]->vel = glm::vec3(0, 0, 0);	
+			balls[0]->isInHole = false;
+		}
+	}
 }
 
 void checkColisions(){
@@ -277,6 +267,8 @@ void loadBalls()
 	balls[3] = new Ball("resource/Ball3.obj", 0, &textures);		
 	balls[3]->pos = glm::vec3(0.3, table.heigh + balls[3]->radius, -0.1);
 	balls[3]->vel = glm::vec3(0, 0, 0);	
+	
+	move(0, 0, 0);
 }
 
 
@@ -326,10 +318,13 @@ void drawStick(){
 	for ( int i=0; i< numOfBall; ++i)
 		if (glm::length(balls[0]->vel) > 0)	 return;
 	glm::vec3 stick = balls[0]->pos - glm::vec3(position.x, table.heigh, position.z);	
-	stick = glm::normalize(stick)*0.3f;	
+	stick = glm::normalize(stick)*0.3f;
+	
+	glLineStipple(3, 0xAAAA);
+	glEnable(GL_LINE_STIPPLE);
 	glBegin(GL_LINES);
 		glVertex3f(balls[0]->pos.x, balls[0]->pos.y, balls[0]->pos.z);
-		glVertex3f(balls[0]->pos.x + stick.x, balls[0]->pos.y + stick.y, balls[0]->pos.z + stick.z);
+		glVertex3f(balls[0]->pos.x + stick.x, balls[0]->pos.y + stick.y + 5, balls[0]->pos.z + stick.z);
 	glEnd();
 }
 
@@ -338,10 +333,10 @@ void draw3DScence()
 	checkInHoles();	
 	checkColisions();
 	
-//	table.draw();
-//	chairs.draw();	
-//	room.draw();
-//	drawDoorAndImage();
+	table.draw();
+	chairs.draw();	
+	room.draw();
+	drawDoorAndImage();
 	drawStick();	
 	updateBalls();	
 	for (int i=0; i< numOfBall; ++i) balls[i]->draw();			
@@ -358,20 +353,33 @@ void draw2DHUD(){
 	glDisable(GL_CULL_FACE);
 	glClear(GL_DEPTH_BUFFER_BIT);    							
 
-	float posx = win.width*0.05;
-	float posy = win.height*0.1;
+	float posx = win.width*0.93;
+	float posy = win.height*0.8;
 	float hudH= win.height*0.6;
-	float hudW = win.width*0.05;
+	float hudW = win.width*0.03;
+	
+	glDisable(GL_LIGHTING);
+    glColor3f(0.5, 0.5, 0.5);
+	glLineWidth(2.0);		 
+	glBegin(GL_LINE_STRIP);   	
+		glVertex2f(posx, posy);
+		glVertex2f(posx+hudW, posy);				
+		glVertex2f(posx+hudW, posy-hudH);
+		glVertex2f(posx, posy-hudH);	
+		glVertex2f(posx, posy);	
+	glEnd();
     
 	if ( force <= 0 || force >= 100) fdir*=-1;
 	force += 4*fdir;
-    hudH = hudH*force/100;	
+    hudH = hudH*force/100;
 	glBegin(GL_POLYGON);  		  	
 		glVertex2f(posx, posy);
 		glVertex2f(posx+hudW, posy);				
-		glVertex2f(posx+hudW, posy+hudH);
-		glVertex2f(posx, posy+hudH);		
-	glEnd();						
+		glVertex2f(posx+hudW, posy-hudH);
+		glVertex2f(posx, posy-hudH);		
+	glEnd();	
+	glEnable(GL_LIGHTING);
+						
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);		
@@ -385,10 +393,10 @@ void draw2DHUD(){
 void display() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
-	gluLookAt( -1,2.0,0, 0.1,0,0, 0,1,0);	
-//	gluLookAt( position.x,position.y,position.z, -0.3,0.2774,0, 0,1,0);		
-	cout << balls[0]->pos.y <<" "<<balls[0]->isInHole<< endl;
+	glLoadIdentity();	
+//	gluLookAt( position.x,position.y,position.z, 0, table.heigh, 0, 0,1,0);	
+	gluLookAt( position.x,position.y,position.z, balls[0]->pos[0], balls[0]->pos[1], balls[0]->pos[2], 0,1,0);	
+//	cout << balls[0]->pos.y <<" "<<balls[0]->isInHole<< endl;
 	draw3DScence();
 	if (isHUDActive)
 		draw2DHUD();
@@ -508,7 +516,6 @@ int main(int argc, char **argv)
 	room = Model_OBJ("resource/Room.obj", 1, &textures);
 	loadDoorAndImage();
 	loadBalls();
-	
 	/////////////////FOR CAMERA/////////////////////////////////////////////////////////////
   	glutMouseFunc(MouseEvent);
   	glutMotionFunc(mouseMotion);
