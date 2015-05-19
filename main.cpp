@@ -224,7 +224,7 @@ void updateBalls(){
 		if ( glm::length(balls[i]->vel) < 0.01) 
 			balls[i]->vel = glm::vec3(0,0,0); 
 		else {
-			glm::vec3 acc = glm::normalize(balls[i]->vel)*-0.08f;							
+			glm::vec3 acc = glm::normalize(balls[i]->vel)*-0.1f;							
 			balls[i]->vel = balls[i]->vel + acc*dt;
 		}
 				
@@ -332,7 +332,7 @@ void draw3DScence()
 {	
 	checkInHoles();	
 	checkColisions();
-	
+
 	table.draw();
 	chairs.draw();	
 	room.draw();
@@ -398,15 +398,13 @@ void display()
 
 	draw3DScence();
 	if (isHUDActive)
-		draw2DHUD();
-	Sleep(10);		
+		draw2DHUD();	
 	glutSwapBuffers();
 }
 void strikeBall(){
-	glm::vec2 cueVel2D = glm::vec2(balls[0]->pos.x,balls[0]->pos.z) - glm::vec2(position.x,position.z);	
-	cueVel2D = glm::normalize(cueVel2D)*(float)(force/100);	
-	glm::vec3 cueVel3D = glm::vec3(cueVel2D.x,0,cueVel2D.y);
-	balls[0]->vel = cueVel3D;
+	glm::vec3 cueVel = balls[0]->pos - glm::vec3(position.x, table.heigh + balls[0]->radius, position.z);
+	cueVel = glm::normalize(cueVel)*(float)(force/100);	
+	balls[0]->vel = cueVel;
 }	
 
 
