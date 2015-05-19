@@ -5,12 +5,12 @@ Table::Table(char* objFile, bool hasTexture, map<string, texture>* textures):Mod
 	this->top = -0.19;
 	this->bottom = 0.2;
 	this->heigh = 0.2574;
-	holes[0] = new Hole(glm::vec3(-0.46388,heigh,0.22166), 0.04);
-	holes[1] = new Hole(glm::vec3(-0.46388, heigh, -0.20933), 0.04);
-	holes[2] = new Hole(glm::vec3(0.00469, heigh, -0.22465), 0.04);		
-	holes[3] = new Hole(glm::vec3(0.00479, heigh, 0.23079), 0.04);			
-	holes[4] = new Hole(glm::vec3(0.47007, heigh, -0.20933), 0.04);		
-	holes[5] = new Hole(glm::vec3(0.47007, heigh, 0.22153), 0.04);
+	holes[0] = new Hole(glm::vec3(-0.46388,heigh,0.22166), 0.06);
+	holes[1] = new Hole(glm::vec3(-0.46388, heigh, -0.20933), 0.06);
+	holes[2] = new Hole(glm::vec3(0.00469, heigh, -0.22465), 0.06);		
+	holes[3] = new Hole(glm::vec3(0.00479, heigh, 0.23079), 0.06);			
+	holes[4] = new Hole(glm::vec3(0.47007, heigh, -0.20933), 0.06);		
+	holes[5] = new Hole(glm::vec3(0.47007, heigh, 0.22153), 0.06);
 }
 
 bool Table::isBallHitLeftBorder(Ball *ball){
