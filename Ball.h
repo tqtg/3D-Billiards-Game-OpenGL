@@ -12,7 +12,8 @@ class Ball: public Model_OBJ{
 		float radius;
 		float mass;
 		glm::vec3 pos;
-		glm::vec3 vel;				
+		glm::vec3 vel;		
+		glm::vec3 orientation;		
 		float angle = 0;			
 		bool isInHole = false;				
 };

@@ -185,21 +185,14 @@ void checkInHoles(){
 				break;
 			}								
 		}
-	}	
-	flag = false;
+	}		
 	if (balls[0]->isInHole){
-		for (int i=0; i< numOfBall; ++i){
-			if (glm::length(balls[i]->vel) != 0){
-				flag = true;
-				break;
-			}
-		}
-		if ( flag == false){
-			Sleep (200);
-			balls[0]->pos = glm::vec3(-0.3, table.heigh + balls[0]->radius, 0);
-			balls[0]->vel = glm::vec3(0, 0, 0);	
-			balls[0]->isInHole = false;
-		}
+		for (int i=0; i< numOfBall; ++i)
+			if (glm::length(balls[i]->vel) != 0) return;													
+		Sleep(200);
+		balls[0]->pos = glm::vec3(-0.3, table.heigh + balls[0]->radius, 0);
+		balls[0]->vel = glm::vec3(0, 0, 0);	
+		balls[0]->isInHole = false;		
 	}
 }
 
@@ -216,18 +209,16 @@ void checkColisions(){
 
 void updateBalls(){
 	float dt= 0.05;
-	for (int i=0; i< numOfBall; ++i){										
-		float stepLength = glm::length(balls[i]->vel)*dt;
-		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);				
-		balls[i]->angle += rotateAngle;
-			
+	for (int i=0; i< numOfBall; ++i){													
 		if ( glm::length(balls[i]->vel) < 0.01) 
 			balls[i]->vel = glm::vec3(0,0,0); 
 		else {
 			glm::vec3 acc = glm::normalize(balls[i]->vel)*-0.1f;							
 			balls[i]->vel = balls[i]->vel + acc*dt;
 		}
-				
+		float stepLength = glm::length(balls[i]->vel)*dt;
+		float rotateAngle = stepLength*180/(M_PI*balls[i]->radius);				
+		balls[i]->angle += rotateAngle;				
 		if (balls[i]->pos.y > 0.22)
 			balls[i]->pos = balls[i]->pos +  balls[i]->vel*dt;											
 	}		
@@ -334,12 +325,12 @@ void draw3DScence()
 	checkColisions();
 
 	table.draw();
-	chairs.draw();	
-	room.draw();
-	drawDoorAndImage();
-	drawStick();	
-	updateBalls();	
+//	chairs.draw();	
+//	room.draw();
+//	drawDoorAndImage();
+	drawStick();		
 	for (int i=0; i< numOfBall; ++i) balls[i]->draw();			
+	updateBalls();	
 }
  
 void draw2DHUD(){

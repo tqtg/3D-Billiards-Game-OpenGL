@@ -1,7 +1,8 @@
 #include "Ball.h"
 Ball::Ball(char* objFile, bool hasTexture, map<string, texture>* textures):Model_OBJ(objFile, hasTexture, textures){
 	this->radius = 0.02;
-	this->mass = 1;				
+	this->mass = 1;		
+	this->orientation = glm::vec3(0,0,0);
 }
 
 bool Ball::isBallHit(Ball* ball){
@@ -37,12 +38,14 @@ void Ball::resToBallHit(Ball *ball){
 	ball->pos = ball->pos - normal*tmp;
 	
 }
-void Ball::draw(){		
+void Ball::draw(){	
+	if (glm::length(vel) > 0)	orientation = vel;	
+	if ( isInHole )	 orientation = glm::vec3(0,0,0);
 	glPushMatrix();				
 		glTranslatef(pos.x, pos.y , pos.z);																	
 		if (angle >= 360) angle =0;		
-		if (!isInHole && glm::length(vel) >0 ){
-			glRotatef(-angle,-vel.z,0,vel.x);					
+		if (!isInHole && glm::length(orientation) != 0 ){
+			glRotatef(-angle,-orientation.z,0,orientation.x);					
 		}								
 		Model_OBJ::draw();
 	glPopMatrix();

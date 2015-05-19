@@ -9,11 +9,11 @@ bool Hole::isBallInHole(Ball *ball){
 	if ( length < (this->radius + ball->radius))
 		return true;
 	else 
-		return false;	
+		return false;			
 }
 
-void Hole::resToBallInHole(Ball *ball){
+void Hole::resToBallInHole(Ball *ball){		
 	ball->pos = this->pos;
 	ball->isInHole = true;
-	ball->vel = glm::vec3(0,-0.05,0);
+	ball->vel = glm::vec3(0,-0.05,0);	
 }
