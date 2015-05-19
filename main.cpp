@@ -211,6 +211,7 @@ void checkInHoles(){
 	}
 	for (int i=1; i < numOfBall; ++i)
 		if (!balls[i]->isInHole) return;
+	Sleep(200);		
 	initBalls();
 }
 
@@ -334,9 +335,9 @@ void draw3DScence()
 	checkColisions();
 
 	table.draw();
-//	chairs.draw();	
-//	room.draw();
-//	drawDoorAndImage();
+	chairs.draw();	
+	room.draw();
+	drawDoorAndImage();
 	drawStick();		
 	for (int i=0; i< numOfBall; ++i) balls[i]->draw();			
 	updateBalls();	
