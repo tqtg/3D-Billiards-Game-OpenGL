@@ -13,36 +13,28 @@ bool Ball::isBallHit(Ball* ball){
 	else 
 		return false;				
 }
-void Ball::resToBallHit(Ball *ball){
-	glm::vec3 U1x, U1y, U2x, U2y, V1x, V1y, V2x, V2y;
-	float m1, m2, x1, x2;
-	glm::vec3 v1temp, v1, v2, v1x, v2x, v1y, v2y, x;
+void Ball::resToBallHit(Ball *ball){	
+	float tmp;
+	glm::vec3 normal, tangential, v1, v2, v1n, v1t, v2n, v2t;
 	
-	x = this->pos - ball->pos;	
-	float tmp = this->radius  - glm::length(x)/2;
-	x = glm::normalize(x);
-	v1 = this->vel;
-	x1 = glm::dot(x,v1);
-	v1x = x*x1;
-	v1y = v1 - v1x;
-	m1 = this->mass;
+	normal = ball->pos - this->pos;	
+	tmp = this->radius  - glm::length(normal)/2;	
+	normal = glm::normalize(normal);
 	
-	x = x * -1.0f;
-	v2 = ball->vel;
-	x2 = glm::dot(x,v2);
-	v2x = x*x2;
-	v2y = v2 - v2x;
-	m2 = ball->mass;
+	v1 = this->vel;	
+	v1n = normal*glm::dot(normal,this->vel);
+	v1t = v1 - v1n;	
 	
-	float tmp1 = (m1-m2)/(m1+m2);
-	float tmp2 = (2*m2)/(m1+m2);
-	float tmp3 = (2*m1)/(m1+m2);
-	float tmp4 = (m2-m1)/(m1+m2);
-	this->vel = v1x*tmp1 + v2x*tmp2 + v1y;	
-	ball->vel = v1x*tmp3 + v2x*tmp4 + v2y;		
+	normal = normal * -1.0f;
+	v2 = ball->vel;	
+	v2n = normal*glm::dot(normal,v2);
+	v2t = v2 - v2n;		
 	
-	this->pos = this->pos - x*tmp;
-	ball->pos = ball->pos + x*tmp;
+	this->vel =  v2n + v1t;	
+	ball->vel =  v1n + v2t;		
+	
+	this->pos = this->pos + normal*tmp;
+	ball->pos = ball->pos - normal*tmp;
 	
 }
 void Ball::draw(){		
