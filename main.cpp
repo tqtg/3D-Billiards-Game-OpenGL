@@ -174,6 +174,21 @@ float Text_Coords[] =
 /************************************************************************
   Collisions Checking and Updating
  ************************************************************************/
+void initBalls(){
+	balls[0]->pos = glm::vec3(-0.3, table.heigh + balls[0]->radius, 0);
+	balls[0]->vel = glm::vec3(0, 0, 0);	
+	balls[0]->isInHole = false;
+	balls[1]->pos = glm::vec3(0.2, table.heigh + balls[1]->radius, 0.0);
+	balls[1]->vel = glm::vec3(0, 0, 0);		
+	balls[1]->isInHole = false;
+	balls[2]->pos = glm::vec3(0.3, table.heigh + balls[2]->radius, 0.1);
+	balls[2]->vel = glm::vec3(0, 0, 0);		
+	balls[2]->isInHole = false;	
+	balls[3]->pos = glm::vec3(0.3, table.heigh + balls[3]->radius, -0.1);
+	balls[3]->vel = glm::vec3(0, 0, 0);		
+	balls[3]->isInHole = false;
+	move(0, 0, 0);
+} 
 
 void checkInHoles(){
 	for (int i=0; i< numOfBall; ++i){
@@ -194,6 +209,9 @@ void checkInHoles(){
 		balls[0]->vel = glm::vec3(0, 0, 0);	
 		balls[0]->isInHole = false;		
 	}
+	for (int i=1; i < numOfBall; ++i)
+		if (!balls[i]->isInHole) return;
+	initBalls();
 }
 
 void checkColisions(){
@@ -210,7 +228,7 @@ void checkColisions(){
 void updateBalls(){
 	float dt= 0.05;
 	for (int i=0; i< numOfBall; ++i){													
-		if ( glm::length(balls[i]->vel) < 0.01) 
+		if ( glm::length(balls[i]->vel) < 0.02) 
 			balls[i]->vel = glm::vec3(0,0,0); 
 		else {
 			glm::vec3 acc = glm::normalize(balls[i]->vel)*-0.1f;							
@@ -246,20 +264,11 @@ void loadDoorAndImage()
 
 void loadBalls()
 {
-	balls[0] = new Ball("resource/Ball0.obj", 0, &textures);	
-	balls[0]->pos = glm::vec3(-0.3, table.heigh + balls[0]->radius, 0);
-	balls[0]->vel = glm::vec3(0, 0, 0);	
+	balls[0] = new Ball("resource/Ball0.obj", 0, &textures);		
 	balls[1] = new Ball("resource/Ball10.obj", 0, &textures);		
-	balls[1]->pos = glm::vec3(0.2, table.heigh + balls[1]->radius, 0.0);
-	balls[1]->vel = glm::vec3(0, 0, 0);	
 	balls[2] = new Ball("resource/Ball13.obj", 0, &textures);		
-	balls[2]->pos = glm::vec3(0.3, table.heigh + balls[2]->radius, 0.1);
-	balls[2]->vel = glm::vec3(0, 0, 0);	
-	balls[3] = new Ball("resource/Ball3.obj", 0, &textures);		
-	balls[3]->pos = glm::vec3(0.3, table.heigh + balls[3]->radius, -0.1);
-	balls[3]->vel = glm::vec3(0, 0, 0);	
-	
-	move(0, 0, 0);
+	balls[3] = new Ball("resource/Ball3.obj", 0, &textures);	
+	initBalls();			
 }
 
 
