@@ -40,8 +40,8 @@ float calculateVerticalDistance(){
 	return distanceFromObject*sin(pitch*PI/180);
 }
 
-void calculateCameraPosition(float horizDistance, float verticDistance){
-	float theta = 0 + angleAroundObject;
+void calculateCameraPosition(float horizDistance, float verticDistance){	
+	float theta = balls[0]->angle + angleAroundObject;
 	float offsetX = horizDistance * sin(theta*PI/180);
 	float offsetZ = horizDistance * cos(theta*PI/180);
 	position.x = balls[0]->pos[0] - offsetX;
